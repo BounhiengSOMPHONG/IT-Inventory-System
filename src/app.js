@@ -2,6 +2,7 @@ const express = require("express");
 const cors = require("cors");
 const departmentRoutes = require('./routes/department.route');
 const employeeRoutes = require('./routes/employee.route');
+const productTypeRoutes = require('./routes/producttype.route');
 const errorHandler = require('./middleware/error.middleware');
 
 const app = express();
@@ -13,6 +14,7 @@ app.use(express.json());
 // API routes
 app.use('/api/departments', departmentRoutes);
 app.use('/api/employees', employeeRoutes);
+app.use('/api/producttypes', productTypeRoutes);
 
 // Error handler
 app.use(errorHandler);
