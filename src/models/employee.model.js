@@ -38,8 +38,9 @@ const Employee = {
   },
 
   async delete(id) {
-    await db.execute('DELETE FROM Employee WHERE id = ?', [id]);
-    return true;
+  const [result] = await db.execute('DELETE FROM Employee WHERE id = ?', [id]);
+  // result.affectedRows === number of rows deleted; return true only if at least one row was removed
+  return result && result.affectedRows > 0;
   }
 };
 

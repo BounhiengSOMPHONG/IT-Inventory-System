@@ -29,9 +29,11 @@ const EmployeeController = {
   },
 
   async remove(req, res) {
-    const id = req.params.id;
-    await EmployeeService.remove(id);
-    res.status(204).send();
+  const id = req.params.id;
+  if (!id) return res.status(400).json({ message: 'Employee id is required' });
+  const deleted = await EmployeeService.remove(id);
+  if (!deleted) return res.status(404).json({ message: 'Employee not found' });
+  res.status(200).json({ message: 'Employee deleted successfully' });
   }
 };
 

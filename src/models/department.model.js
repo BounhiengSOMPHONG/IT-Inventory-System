@@ -22,8 +22,8 @@ const Department = {
   },
 
   async delete(id) {
-    await db.execute('DELETE FROM Department WHERE id = ?', [id]);
-    return true;
+    const [result] = await db.execute('DELETE FROM Department WHERE id = ?', [id]);
+    return result && result.affectedRows > 0;
   }
 };
 
