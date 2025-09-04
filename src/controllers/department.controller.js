@@ -9,7 +9,8 @@ const DepartmentController = {
   },
 
   async list(req, res) {
-    const depts = await DepartmentService.list();
+    const { search } = req.query;
+    const depts = await DepartmentService.list(search);
     res.json(depts);
   },
 

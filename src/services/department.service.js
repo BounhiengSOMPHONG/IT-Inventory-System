@@ -5,8 +5,8 @@ const DepartmentService = {
     return Department.create(data.name);
   },
 
-  list() {
-    return Department.findAll();
+  list(search) {
+    return Department.findAll(search);
   },
 
   get(id) {

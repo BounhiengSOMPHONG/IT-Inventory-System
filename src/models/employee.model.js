@@ -17,12 +17,16 @@ const Employee = {
     return rows[0];
   },
 
-  async findAll() {
-    const [rows] = await db.execute(
-      `SELECT e.id, e.name, e.department_id, d.department_name as department_name, e.remark, e.created_at
+  async findAll(search) {
+    let sql = `SELECT e.id, e.name, e.department_id, d.department_name as department_name, e.remark, e.created_at
        FROM employee e
-       LEFT JOIN department d ON e.department_id = d.id`
-    );
+       LEFT JOIN department d ON e.department_id = d.id`;
+    const params = [];
+    if (search) {
+      sql += ' WHERE e.name LIKE ? OR d.department_name LIKE ?';
+      params.push(`%${search}%`, `%${search}%`);
+    }
+    const [rows] = await db.execute(sql, params);
     return rows;
   },
 

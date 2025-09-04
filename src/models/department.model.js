@@ -9,9 +9,14 @@ const Department = {
   return rows[0];
   },
 
-  async findAll() {
-    // alias department_name to name for existing service/controller compatibility
-    const [rows] = await db.execute('SELECT id, department_name AS name FROM department');
+  async findAll(search) {
+    let sql = 'SELECT id, department_name AS name FROM department';
+    const params = [];
+    if (search) {
+      sql += ' WHERE department_name LIKE ?';
+      params.push(`%${search}%`);
+    }
+    const [rows] = await db.execute(sql, params);
     return rows;
   },
 

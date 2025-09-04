@@ -5,8 +5,8 @@ const EmployeeService = {
     return Employee.create(data);
   },
 
-  list() {
-    return Employee.findAll();
+  list(search) {
+    return Employee.findAll(search);
   },
 
   get(id) {

@@ -9,7 +9,8 @@ const EmployeeController = {
   },
 
   async list(req, res) {
-    const emps = await EmployeeService.list();
+    const { search } = req.query;
+    const emps = await EmployeeService.list(search);
     res.json(emps);
   },
 
