@@ -2,27 +2,31 @@ const db = require('../config/db');
 
 const Department = {
   async create(name) {
-    const [result] = await db.execute('INSERT INTO Department (name) VALUES (?)', [name]);
-    return { id: result.insertId, name };
+    // database column is `department_name` in `department` table
+  const [result] = await db.execute('INSERT INTO department (department_name) VALUES (?)', [name]);
+  const id = result.insertId;
+  const [rows] = await db.execute('SELECT id, department_name AS name, created_at FROM department WHERE id = ?', [id]);
+  return rows[0];
   },
 
   async findAll() {
-    const [rows] = await db.execute('SELECT id, name FROM Department');
+    // alias department_name to name for existing service/controller compatibility
+    const [rows] = await db.execute('SELECT id, department_name AS name FROM department');
     return rows;
   },
 
   async findById(id) {
-    const [rows] = await db.execute('SELECT id, name FROM Department WHERE id = ?', [id]);
+    const [rows] = await db.execute('SELECT id, department_name AS name FROM department WHERE id = ?', [id]);
     return rows[0];
   },
 
   async update(id, name) {
-    await db.execute('UPDATE Department SET name = ? WHERE id = ?', [name, id]);
+    await db.execute('UPDATE department SET department_name = ? WHERE id = ?', [name, id]);
     return this.findById(id);
   },
 
   async delete(id) {
-    const [result] = await db.execute('DELETE FROM Department WHERE id = ?', [id]);
+    const [result] = await db.execute('DELETE FROM department WHERE id = ?', [id]);
     return result && result.affectedRows > 0;
   }
 };
