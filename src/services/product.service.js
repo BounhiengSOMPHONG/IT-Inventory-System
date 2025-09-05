@@ -1,26 +1,15 @@
 const Product = require('../models/product.model');
 
-const ProductService = {
-  create(data) {
-    return Product.create(data);
-  },
-  list(query) {
-    return Product.findAll(query);
-  },
-  get(id) {
-    return Product.findById(id);
-  },
-  update(id, data) {
-    return Product.update(id, data);
-  },
-  remove(id) {
-    return Product.softDelete(id);
-  },
-  restore(id) {
-    return Product.restore(id);
-  }
+const ProductService ={
+    create(data){
+        return Product.create(data);
+    },
+    list(query){
+        return Product.findAll(query.search, query.status_id);
+    },
+    get(id){
+        return Product.findById(id);
+    },
 };
 
 module.exports = ProductService;
-
-
