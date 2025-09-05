@@ -10,6 +10,9 @@ const ProductService ={
     get(id){
         return Product.findById(id);
     },
+    updateAndlog(id, newData, logData) {
+    return Product.updateAndlog(id, newData, logData);
+  },
 };
 
 module.exports = ProductService;

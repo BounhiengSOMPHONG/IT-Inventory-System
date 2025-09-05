@@ -28,16 +28,20 @@ const ProductController = {
     ) {
       return res.status(400).json({ message: "Incomplete information" });
     }
-    const { diskLayout, mem, cpu } = si;
+    const { diskLayout, mem, cpu, osInfo  } = si;
 
     if (!data.hd || !data.ram || !data.cpu) {
       try {
-        const [disk, memory, proc] = await Promise.all([
+        const [disk, memory, proc,os] = await Promise.all([
           diskLayout(),
           mem(),
           cpu(),
+          osInfo(),
         ]);
-        data.hd ||= disk?.[0]?.name || disk?.[0]?.type || null;
+        //name computer
+        data.hd ||= os.hostname || null;
+        //hdd
+        // data.hd ||= disk?.[0]?.name || disk?.[0]?.type || null;
         data.ram ||= memory
           ? `${Math.round(memory.total / 1024 / 1024)} MB`
           : null;
@@ -70,6 +74,16 @@ const ProductController = {
     const prod = await ProductService.get(id);
     if (!prod) return res.status(404).json({message: 'Product not found'});
     res.json(prod);
+  },
+  async update(req,res){
+    const id = req.params.id;
+    const {newData,logData} = req.body;
+    const updated = await ProductService.updateAndlog(id, newData,logData);
+    return res.json({
+      success: true,
+      message: "Product updated and logged",
+      data: updated,
+    });
   }
 };
 
