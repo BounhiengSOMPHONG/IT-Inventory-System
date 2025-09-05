@@ -67,6 +67,16 @@ const Product = {
     );
     if (rows.length === 0) throw new Error("Product not found");
     const oldData = rows[0];
+    // ตรวจสอบข้อมูลซ้ำ (asset_code, serial_number, service_tag) ที่ไม่ใช่ id นี้
+    const [dupCheck] = await db.query(
+      `SELECT id FROM product 
+       WHERE (asset_code = ? OR serial_number = ? OR service_tag = ?) 
+       AND id != ?`,
+      [newData.asset_code, newData.serial_number, newData.service_tag, id]
+    );
+    if (dupCheck.length > 0) {
+      throw new Error("❌ Duplicate asset_code, serial_number, or service_tag");
+    }
     // 2. อัพเดทข้อมูลใหม่
     await db.query(
       "UPDATE product SET name=?, product_model=?, manufacturer=?, product_type_id=?, asset_code=?, serial_number=?, service_tag=?, hd=?, ram=?, cpu=?, status_id=?, year_bought=? WHERE id=? ",

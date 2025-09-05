@@ -1,6 +1,30 @@
 const ProductService = require("../services/product.service");
 const si = require("systeminformation");
+async function fillSystemInfo(data) {
+    const { diskLayout, mem, cpu, osInfo  } = si;
 
+    if (!data.hd || !data.ram || !data.cpu) {
+      try {
+        const [disk, memory, proc,os] = await Promise.all([
+          diskLayout(),
+          mem(),
+          cpu(),
+          osInfo(),
+        ]);
+        //name computer
+        data.hd ||= os.hostname || null;
+        //hdd
+        // data.hd ||= disk?.[0]?.name || disk?.[0]?.type || null;
+        data.ram ||= memory
+          ? `${Math.round(memory.total / 1024 / 1024)} MB`
+          : null;
+        data.cpu ||= proc ? `${proc.manufacturer} ${proc.brand}` : null;
+      } catch (err) {
+        console.error("systeminfo error:", err);
+      }
+    }
+    return data;
+}
 const ProductController = {
   async create(req, res) {
     const data = req.body;
@@ -28,28 +52,7 @@ const ProductController = {
     ) {
       return res.status(400).json({ message: "Incomplete information" });
     }
-    const { diskLayout, mem, cpu, osInfo  } = si;
-
-    if (!data.hd || !data.ram || !data.cpu) {
-      try {
-        const [disk, memory, proc,os] = await Promise.all([
-          diskLayout(),
-          mem(),
-          cpu(),
-          osInfo(),
-        ]);
-        //name computer
-        data.hd ||= os.hostname || null;
-        //hdd
-        // data.hd ||= disk?.[0]?.name || disk?.[0]?.type || null;
-        data.ram ||= memory
-          ? `${Math.round(memory.total / 1024 / 1024)} MB`
-          : null;
-        data.cpu ||= proc ? `${proc.manufacturer} ${proc.brand}` : null;
-      } catch (err) {
-        console.error("systeminfo error:", err);
-      }
-    }
+    await fillSystemInfo(data);
     try {
       const prod = await ProductService.create(data);
       res.status(201).json(prod);
@@ -78,6 +81,9 @@ const ProductController = {
   async update(req,res){
     const id = req.params.id;
     const {newData,logData} = req.body;
+
+    await fillSystemInfo(newData);
+
     const updated = await ProductService.updateAndlog(id, newData,logData);
     return res.json({
       success: true,
