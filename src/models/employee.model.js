@@ -8,7 +8,7 @@ const Employee = {
     );
     const id = result.insertId;
     const [rows] = await db.execute(
-      `SELECT e.id, e.name, e.department_id, d.department_name as department_name, e.remark, e.created_at
+      `SELECT e.id, e.name, e.department_id, d.name , e.remark
        FROM employee e
        LEFT JOIN department d ON e.department_id = d.id
        WHERE e.id = ?`,
@@ -18,12 +18,12 @@ const Employee = {
   },
 
   async findAll(search) {
-    let sql = `SELECT e.id, e.name, e.department_id, d.department_name as department_name, e.remark, e.created_at
+    let sql = `SELECT e.id, e.name, e.department_id, d.name , e.remark
        FROM employee e
        LEFT JOIN department d ON e.department_id = d.id`;
     const params = [];
     if (search) {
-      sql += ' WHERE e.name LIKE ? OR d.department_name LIKE ?';
+      sql += ' WHERE e.name LIKE ? OR d.name LIKE ?';
       params.push(`%${search}%`, `%${search}%`);
     }
     const [rows] = await db.execute(sql, params);
@@ -32,7 +32,7 @@ const Employee = {
 
   async findById(id) {
     const [rows] = await db.execute(
-      `SELECT e.id, e.name, e.department_id, d.department_name as department_name, e.remark, e.created_at
+      `SELECT e.id, e.name, e.department_id, d.name , e.remark
        FROM employee e
        LEFT JOIN department d ON e.department_id = d.id
        WHERE e.id = ?`,

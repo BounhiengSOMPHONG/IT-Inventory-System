@@ -2,18 +2,18 @@ const db = require('../config/db');
 
 const Department = {
   async create(name) {
-    // database column is `department_name` in `department` table
-  const [result] = await db.execute('INSERT INTO department (department_name) VALUES (?)', [name]);
+    // database column is `name` in `department` table
+  const [result] = await db.execute('INSERT INTO department (name) VALUES (?)', [name]);
   const id = result.insertId;
-  const [rows] = await db.execute('SELECT id, department_name AS name, created_at FROM department WHERE id = ?', [id]);
+  const [rows] = await db.execute('SELECT id, name FROM department WHERE id = ?', [id]);
   return rows[0];
   },
 
   async findAll(search) {
-    let sql = 'SELECT id, department_name AS name FROM department';
+    let sql = 'SELECT id, name FROM department';
     const params = [];
     if (search) {
-      sql += ' WHERE department_name LIKE ?';
+      sql += ' WHERE name LIKE ?';
       params.push(`%${search}%`);
     }
     const [rows] = await db.execute(sql, params);
@@ -21,12 +21,12 @@ const Department = {
   },
 
   async findById(id) {
-    const [rows] = await db.execute('SELECT id, department_name AS name FROM department WHERE id = ?', [id]);
+    const [rows] = await db.execute('SELECT id, name FROM department WHERE id = ?', [id]);
     return rows[0];
   },
 
   async update(id, name) {
-    await db.execute('UPDATE department SET department_name = ? WHERE id = ?', [name, id]);
+    await db.execute('UPDATE department SET name = ? WHERE id = ?', [name, id]);
     return this.findById(id);
   },
 
