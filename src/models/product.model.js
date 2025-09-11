@@ -3,7 +3,7 @@ const db = require("../config/db");
 const Product = {
   async create(data) {
     const [result] = await db.execute(
-      "INSERT INTO product (name,product_model,manufacturer,product_type_id,asset_code,serial_number,service_tag,hd,ram,cpu,status_id,added_by,year_bought) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+      "INSERT INTO Product (name,product_model,manufacturer,product_type_id,asset_code,serial_number,service_tag,hd,ram,cpu,status_id,added_by,year_bought) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
       [
         data.name,
         data.product_model,
@@ -21,12 +21,12 @@ const Product = {
       ]
     );
     const id = result.insertId;
-    const [rows] = await db.execute("SELECT * FROM product WHERE id = ?", [id]);
+    const [rows] = await db.execute("SELECT * FROM Product WHERE id = ?", [id]);
     return rows[0];
   },
 
   async findAll(search, status_id) {
-    let sql = "SELECT * FROM product";
+    let sql = "SELECT * FROM Product";
     const params = [];
     const whereClauses = [];
 
@@ -51,17 +51,17 @@ const Product = {
     return rows;
   },
   async findById(id) {
-    const [rows] = await db.execute("SELECT * FROM product WHERE id = ?", [id]);
+    const [rows] = await db.execute("SELECT * FROM Product WHERE id = ?", [id]);
     return rows[0];
   },
 
-  //update product and edit_log
+  //update Product and edit_log
   async updateAndlog(id, newData, logData) {
     // 1. ดึงข้อมูลเก่ามา
     const [rows] = await db.query(
       `SELECT p.*, pt.name AS product_type_name 
-         FROM product p
-         LEFT JOIN product_type pt ON p.product_type_id = pt.id
+         FROM Product p
+         LEFT JOIN ProductType pt ON p.product_type_id = pt.id
          WHERE p.id = ?`,
       [id]
     );
@@ -69,7 +69,7 @@ const Product = {
     const oldData = rows[0];
     // ตรวจสอบข้อมูลซ้ำ (asset_code, serial_number, service_tag) ที่ไม่ใช่ id นี้
     const [dupCheck] = await db.query(
-      `SELECT id FROM product 
+      `SELECT id FROM Product 
        WHERE (asset_code = ? OR serial_number = ? OR service_tag = ?) 
        AND id != ?`,
       [newData.asset_code, newData.serial_number, newData.service_tag, id]
@@ -79,7 +79,7 @@ const Product = {
     }
     // 2. อัพเดทข้อมูลใหม่
     await db.query(
-      "UPDATE product SET name=?, product_model=?, manufacturer=?, product_type_id=?, asset_code=?, serial_number=?, service_tag=?, hd=?, ram=?, cpu=?, status_id=?, year_bought=? WHERE id=? ",
+      "UPDATE Product SET name=?, product_model=?, manufacturer=?, product_type_id=?, asset_code=?, serial_number=?, service_tag=?, hd=?, ram=?, cpu=?, status_id=?, year_bought=? WHERE id=? ",
       [
         newData.name,
         newData.product_model,
@@ -98,7 +98,7 @@ const Product = {
     );
     // 3. บันทึก log
     await db.query(
-      "INSERT INTO product_log_edit (product_id, product_name, product_type, owner_id, asset_code, serial_number, service_tag, cpu, ram, hd, edit_by, action_type) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'UPDATE')",
+      "INSERT INTO ProductLogEdit (product_id, product_name, product_type, owner_id, asset_code, serial_number, service_tag, cpu, ram, hd, edit_by, action_type) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'UPDATE')",
       [
         id,
         oldData.name,
