@@ -5,6 +5,8 @@ const employeeRoutes = require('./routes/employee.route');
 const productTypeRoutes = require('./routes/producttype.route');
 const ProductRoutes = require('./routes/product.route');
 const errorHandler = require('./middleware/error.middleware');
+const authRoutes = require('./routes/auth.route');
+const authMiddleware = require('./middleware/auth.middleware');
 
 const app = express();
 
@@ -17,6 +19,11 @@ app.use('/api/departments', departmentRoutes);
 app.use('/api/employees', employeeRoutes);
 app.use('/api/producttypes', productTypeRoutes);
 app.use('/api/products',ProductRoutes);
+// Auth routes
+app.use('/api/auth', authRoutes);
+
+// Example protected route (optional):
+// app.use('/api/secure', authMiddleware, secureRoutes);
 
 // Error handler
 app.use(errorHandler);

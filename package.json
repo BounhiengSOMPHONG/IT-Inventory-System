@@ -15,6 +15,8 @@
     "dotenv": "^17.2.2",
     "express": "^5.1.0",
     "mysql2": "^3.14.4",
+    "bcryptjs": "^2.4.3",
+    "jsonwebtoken": "^9.0.0",
     "systeminformation": "^5.27.8"
   },
   "devDependencies": {
