@@ -5,7 +5,7 @@ const ProductService ={
         return Product.create(data);
     },
     list(query){
-        return Product.findAll(query.search, query.status_id);
+        return Product.findAll(query.search, query.status);
     },
     get(id){
         return Product.findById(id);

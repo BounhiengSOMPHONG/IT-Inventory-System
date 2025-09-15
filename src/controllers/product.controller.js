@@ -60,15 +60,21 @@ const ProductController = {
       if (error.code === 'ER_DUP_ENTRY') {
         return res.status(409).json({ message: 'Asset code already exists.' });
       }
-      res.status(500).json({ message: 'An error occurred.' });
+      if (error.code === 'INVALID_PRODUCT_TYPE') {
+        return res.status(400).json({ message: 'Invalid product_type id' });
+      }
+      if (error.code === 'ER_NO_REFERENCED_ROW_2' || error.message.includes('foreign key') ) {
+        return res.status(400).json({ message: 'Invalid foreign key reference' , error: error.message});
+      }
+      res.status(500).json({ message: 'An error occurred.', error: error.message });
     }
   },
 
   async list(req, res){
-    const {search,status_id} = req.query;
+    const {search,status} = req.query;
     const q = {};
     if (search) q.search = search;
-    if (typeof status_id !== 'undefined') q.status_id = Number(status_id);
+    if (typeof status !== 'undefined') q.status = Number(status);
     const prods = await ProductService.list(q);
     res.json(prods);
   },
@@ -79,17 +85,35 @@ const ProductController = {
     res.json(prod);
   },
   async update(req,res){
-    const id = req.params.id;
-    const {newData,logData} = req.body;
+    try {
+      const id = req.params.id;
+      const {newData,logData} = req.body;
 
-    await fillSystemInfo(newData);
+      // if (newData.status_id !== undefined) {
+      //   newData.status = newData.status_id;
+      //   delete newData.status_id;
+      // }
 
-    const updated = await ProductService.updateAndlog(id, newData,logData);
-    return res.json({
-      success: true,
-      message: "Product updated and logged",
-      data: updated,
-    });
+      await fillSystemInfo(newData);
+
+      const updated = await ProductService.updateAndlog(id, newData,logData);
+      return res.json({
+        success: true,
+        message: "Product updated and logged",
+        data: updated,
+      });
+    } catch (error) {
+      if (error.message.includes('Duplicate')) {
+        return res.status(409).json({ message: error.message });
+      }
+      if (error.code === 'ER_NO_REFERENCED_ROW_2' || error.message.includes('foreign key') ) {
+        return res.status(400).json({ message: 'Invalid foreign key reference' , error: error.message});
+      }
+      // if (error.message.includes("Data truncated for column 'status'")) {
+      //   return res.status(400).json({ message: "Invalid status value. Please use 1 for 'Active' or 2 for 'Inactive'." });
+      // }
+      res.status(500).json({ message: 'An error occurred.', error: error.message });
+    }
   }
 };
 
