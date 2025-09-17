@@ -5,7 +5,7 @@ const EmployeeController = {
     const { name, departmentId, remark } = req.body;
     if (!name) return res.status(400).json({ message: 'Name is required' });
     const emp = await EmployeeService.create({ name, departmentId, remark });
-    res.status(201).json({message: 'Create Succes'},emp);
+    res.status(201).json(emp);
   },
 
   async list(req, res) {
@@ -34,7 +34,7 @@ const EmployeeController = {
   if (!id) return res.status(400).json({ message: 'Employee id is required' });
   const deleted = await EmployeeService.remove(id);
   if (!deleted) return res.status(404).json({ message: 'Employee not found' });
-  res.status(200).json({ message: 'Employee deleted successfully' });
+  res.status(200).json({ message: 'Employee deleted successfully',data: deleted});
   }
 };
 

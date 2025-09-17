@@ -33,7 +33,7 @@ const DepartmentController = {
     const id = req.params.id;
     const deleted = await DepartmentService.remove(id);
     if (!deleted) return res.status(404).json({ message: 'Department not found' });
-    res.status(200).json({ message: 'Department deleted successfully',deleted });
+    res.status(200).json({ message: 'Department deleted successfully',data: deleted });
   }
 };
 
