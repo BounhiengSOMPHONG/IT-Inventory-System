@@ -29,7 +29,7 @@ const ProductTypeController = {
         const id = req.params.id;
         const deleted = await ProductTypeService.remove(id);
         if (!deleted) return res.status(404).json({ message: 'Product Type not found' });
-        res.status(200).json({ message: 'Product Type deleted successfully' });
+        res.status(200).json({ message: 'Product Type deleted successfully',data: deleted });
     }
     
 
