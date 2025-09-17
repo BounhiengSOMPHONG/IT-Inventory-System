@@ -13,20 +13,36 @@ const ProductController = {
     }
   },
 
-  async list(req, res){
-    const {search,status} = req.query;
-    const q = {};
-    if (search) q.search = search;
-    if (typeof status !== 'undefined') q.status = Number(status);
-    const prods = await ProductService.list(q);
-    res.json(prods);
+  async list(req, res) {
+    try {
+      const { search, status } = req.query;
+      const query = {
+        search,
+        // Ensure status is a number if it exists, otherwise undefined.
+        status: status !== undefined ? Number(status) : undefined,
+      };
+      const prods = await ProductService.list(query);
+      res.json(prods);
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: "Failed to fetch products" });
+    }
   },
-  async get(req,res){
-    const id = req.params.id;
-    const prod = await ProductService.get(id);
-    if (!prod) return res.status(404).json({message: 'Product not found'});
-    res.json(prod);
+
+  async get(req, res) {
+    try {
+      const id = req.params.id;
+      const prod = await ProductService.get(id);
+      if (!prod) {
+        return res.status(404).json({ message: "Product not found" });
+      }
+      res.json(prod);
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: "Failed to fetch product" });
+    }
   },
+  
   async update(req,res){
    
   }
