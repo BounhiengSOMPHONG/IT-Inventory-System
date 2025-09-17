@@ -4,8 +4,8 @@ const ProductTypeService = {
   create(data) {
     return ProductType.create(data.name);
   },
-    list() {
-        return ProductType.findAll();
+    list(search) {
+        return ProductType.findAll(search);
     },
     get(id) {
         return ProductType.findById(id);
