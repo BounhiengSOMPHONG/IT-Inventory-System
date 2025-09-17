@@ -2,10 +2,10 @@ const EmployeeService = require('../services/employee.service');
 
 const EmployeeController = {
   async create(req, res) {
-    const { name, department_id, remark } = req.body;
+    const { name, departmentId, remark } = req.body;
     if (!name) return res.status(400).json({ message: 'Name is required' });
-    const emp = await EmployeeService.create({ name, department_id, remark });
-    res.status(201).json(emp);
+    const emp = await EmployeeService.create({ name, departmentId, remark });
+    res.status(201).json({message: 'Create Succes'},emp);
   },
 
   async list(req, res) {
@@ -23,9 +23,9 @@ const EmployeeController = {
 
   async update(req, res) {
     const id = req.params.id;
-    const { name, department_id, remark } = req.body;
+    const { name, departmentId, remark } = req.body;
     if (!name) return res.status(400).json({ message: 'Name is required' });
-    const updated = await EmployeeService.update(id, { name, department_id, remark });
+    const updated = await EmployeeService.update(id, { name, departmentId, remark });
     res.json(updated);
   },
 

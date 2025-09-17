@@ -1,29 +1,21 @@
 const db = require('../config/db');
 
 const Employee = {
-  async create({ name, department_id, remark }) {
+  async create({ name, departmentId, remark }) {
     const [result] = await db.execute(
-      'INSERT INTO Employee (name, department_id, remark) VALUES (?, ?, ?)',
-      [name, department_id || null, remark || null]
+      'INSERT INTO Employee (Name, DepartmentId, Remark) VALUES (?, ?, ?)',
+      [name, departmentId || null, remark || null]
     );
-    const id = result.insertId;
-    const [rows] = await db.execute(
-      `SELECT e.id, e.name, e.department_id, d.name , e.remark
-       FROM Employee e
-       LEFT JOIN Department d ON e.department_id = d.id
-       WHERE e.id = ?`,
-      [id]
-    );
-    return rows[0];
+    return result[0];
   },
 
   async findAll(search) {
-    let sql = `SELECT e.id, e.name, e.department_id, d.name , e.remark
+    let sql = `SELECT e.Id, e.Name, e.DepartmentId, d.DepartmentName, e.Remark
        FROM Employee e
-       LEFT JOIN Department d ON e.department_id = d.id`;
+       LEFT JOIN Department d ON e.DepartmentId = d.Id`;
     const params = [];
     if (search) {
-      sql += ' WHERE e.name LIKE ? OR d.name LIKE ?';
+      sql += ' WHERE e.Name LIKE ? OR d.DepartmentName LIKE ?';
       params.push(`%${search}%`, `%${search}%`);
     }
     const [rows] = await db.execute(sql, params);
@@ -32,25 +24,25 @@ const Employee = {
 
   async findById(id) {
     const [rows] = await db.execute(
-      `SELECT e.id, e.name, e.department_id, d.name , e.remark
+      `SELECT e.Id, e.Name, e.DepartmentId, d.DepartmentName, e.Remark
        FROM Employee e
-       LEFT JOIN Department d ON e.department_id = d.id
-       WHERE e.id = ?`,
+       LEFT JOIN Department d ON e.DepartmentId = d.Id
+       WHERE e.Id = ?`,
       [id]
     );
     return rows[0];
   },
 
-  async update(id, { name, department_id, remark }) {
+  async update(id, { name, departmentId, remark }) {
     await db.execute(
-      'UPDATE Employee SET name = ?, department_id = ?, remark = ? WHERE id = ?',
-      [name, department_id || null, remark || null, id]
+      'UPDATE Employee SET Name = ?, DepartmentId = ?, Remark = ? WHERE Id = ?',
+      [name, departmentId || null, remark || null, id]
     );
     return this.findById(id);
   },
 
   async delete(id) {
-  const [result] = await db.execute('DELETE FROM Employee WHERE id = ?', [id]);
+  const [result] = await db.execute('DELETE FROM Employee WHERE Id = ?', [id]);
   // result.affectedRows === number of rows deleted; return true only if at least one row was removed
   return result && result.affectedRows > 0;
   }
