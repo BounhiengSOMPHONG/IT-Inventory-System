@@ -6,7 +6,7 @@ const Department = {
   const [result] = await db.execute('INSERT INTO Department (DepartmentName) VALUES (?)', [name]);
   const id = result.insertId;
   const [rows] = await db.execute('SELECT id, DepartmentName FROM Department WHERE id = ?', [id]);
-  return rows[0];
+  return rows.insertId;
   },
 
   async findAll(search) {

@@ -6,7 +6,7 @@ const Employee = {
       'INSERT INTO Employee (Name, DepartmentId, Remark) VALUES (?, ?, ?)',
       [name, departmentId || null, remark || null]
     );
-    return result[0];
+    return result.insertId;
   },
 
   async findAll(search) {

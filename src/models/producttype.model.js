@@ -5,7 +5,7 @@ const ProductType = {
   const [result] = await db.execute('INSERT INTO ProductType (Name) VALUES (?)', [name]);
   const id = result.insertId;
   const [rows] = await db.execute('SELECT Id, Name FROM ProductType WHERE Id = ?', [id]);
-  return rows[0];
+  return rows.insertId;
   },
   async findAll(search) {
     let sql = 'SELECT Id, Name FROM ProductType';

@@ -1,18 +1,63 @@
 const Product = require('../models/product.model');
+const si = require("systeminformation");
 
-const ProductService ={
-    create(data){
-        return Product.create(data);
+
+const ProductService = {
+    async create(data) {
+        const asset_code = await this.generateAssetCode();
+        const filledData = await this.fillSystemInfo(data);
+        return Product.create({ ...filledData, assetCode: asset_code });
     },
-    list(query){
+    async generateAssetCode() {
+        const lastCode = await Product.getLastCode();
+
+        let nextNumber = 1;
+        if (lastCode) {
+            // Extract the number from either format: IT-XXXX or ITXXXX
+            const lastNumber = parseInt(lastCode.replace("IT-", "").replace("IT", ""), 10);
+            nextNumber = lastNumber + 1;
+        }
+
+        // Use the format ITXXXX to match existing data
+        return `IT${String(nextNumber).padStart(4, "0")}`;
+    },
+    async fillSystemInfo(data) {
+        const { diskLayout, mem, cpu, osInfo } = si;
+
+        if (!data.hd || !data.ram || !data.cpu) {
+            try {
+                const [disk, memory, proc, os] = await Promise.all([
+                    diskLayout(),
+                    mem(),
+                    cpu(),
+                    osInfo(),
+                ]);
+                //name computer
+                data.hd ||= os.hostname || null;
+                //hdd
+                // data.hd ||= disk?.[0]?.name || disk?.[0]?.type || null;
+                // data.ram ||= memory
+                //     ? `${Math.round(memory.total / 1024 / 1024)} MB`
+                //     : null;
+                data.ram ||= memory
+                    ? `${(memory.total / 1024 / 1024 / 1024).toFixed(2)} GB`
+                    : null;
+                data.cpu ||= proc ? `${proc.manufacturer} ${proc.brand}` : null;
+            } catch (err) {
+                console.error("systeminfo error:", err);
+            }
+        }
+        return data;
+    },
+    list(query) {
         return Product.findAll(query.search, query.status);
     },
-    get(id){
+    get(id) {
         return Product.findById(id);
     },
     updateAndlog(id, newData, logData) {
-    return Product.updateAndlog(id, newData, logData);
-  },
+        return Product.updateAndlog(id, newData, logData);
+    },
 };
 
 module.exports = ProductService;
