@@ -55,9 +55,12 @@ const ProductService = {
     get(id) {
         return Product.findById(id);
     },
-    updateAndlog(id, newData, logData) {
-        return Product.updateAndlog(id, newData, logData);
+    update(id, data, userId) {
+        return Product.update(id, data, userId);
     },
+    delete(id, userId) {
+        return Product.delete(id, userId);
+    }
 };
 
 module.exports = ProductService;

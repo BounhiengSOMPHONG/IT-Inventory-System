@@ -43,8 +43,37 @@ const ProductController = {
     }
   },
   
-  async update(req,res){
-   
+  async update(req, res) {
+    try {
+      const id = req.params.id;
+      const data = req.body;
+      // Get user ID from the authenticated user (set by auth middleware)
+      const userId = req.user?.id;
+      const result = await ProductService.update(id, data, userId);
+      if (result === 0) {
+        return res.status(404).json({ message: "Product not found" });
+      }
+      res.json({ message: "Product updated successfully" });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: "Failed to update product" });
+    }
+  },
+  
+  async delete(req, res) {
+    try {
+      const id = req.params.id;
+      // Get user ID from the authenticated user (set by auth middleware)
+      const userId = req.user?.id;
+      const result = await ProductService.delete(id, userId);
+      if (result === 0) {
+        return res.status(404).json({ message: "Product not found" });
+      }
+      res.json({ message: "Product deleted successfully" });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: "Failed to delete product" });
+    }
   }
 };
 

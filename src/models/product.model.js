@@ -52,6 +52,39 @@ const Product = {
   async findById(id) {
     const [rows] = await db.execute("SELECT * FROM Product WHERE id = ?", [id]);
     return rows[0] || null;
+  },
+  async update(id, data, userId) {
+    // Set the current user ID for logging
+    await db.execute("SET @current_user_id = ?", [userId || null]);
+    
+    const [
+      result
+    ] = await db.execute(
+      "UPDATE Product SET ProductName = ?, ProductModel = ?, Manufacturer = ?, ProductTypeId = ?, AssetCode = ?, SerialNumber = ?, ServiceTag = ?, HD = ?, RAM = ?, CPU = ?, Status = ?, YearBought = ? WHERE Id = ?",
+      [
+        data.productName || null,
+        data.productModel || null,
+        data.manufacturer || null,
+        data.productTypeId || null,
+        data.assetCode || null,
+        data.serialNumber || null,
+        data.serviceTag || null,
+        data.hd || null,
+        data.ram || null,
+        data.cpu || null,
+        data.status || null,
+        data.yearBought || null,
+        id
+      ]
+    );
+    return result.affectedRows;
+  },
+  async delete(id, userId) {
+    // Set the current user ID for logging
+    await db.execute("SET @current_user_id = ?", [userId || null]);
+    
+    const [result] = await db.execute("DELETE FROM Product WHERE Id = ?", [id]);
+    return result.affectedRows;
   }
 };
 
