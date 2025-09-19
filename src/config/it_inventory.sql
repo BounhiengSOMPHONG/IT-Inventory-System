@@ -203,7 +203,7 @@ CREATE TRIGGER `tr_product_edit_log` BEFORE UPDATE ON `Product` FOR EACH ROW BEG
         SerialNumber, ServiceTag, CPU, RAM, HD, EditBy
     ) VALUES (
         OLD.Id, OLD.ProductName, OLD.ProductTypeId, 
-        (SELECT EmployeeId FROM Service WHERE AssetCode = OLD.AssetCode ORDER BY Id DESC LIMIT 1),
+        OLD.AddedBy,
         OLD.AssetCode, OLD.SerialNumber, OLD.ServiceTag, 
         OLD.CPU, OLD.RAM, OLD.HD, @current_user_id
     );

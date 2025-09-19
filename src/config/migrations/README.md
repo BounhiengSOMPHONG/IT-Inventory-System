@@ -19,9 +19,29 @@ This directory contains scripts used for database schema changes and cleanup ope
 - Alternative method for dropping the trigger using direct MySQL connection
 - Used when prepared statements don't support certain operations
 
+### 05_fix_product_log_edit_trigger.sql
+- SQL script to fix the ProductLogEdit trigger
+- Changes the Owner field to use AddedBy from Product table instead of looking in Service table
+
+## Important JavaScript Files (Preserved for Reference)
+
+### ../fix_trigger.js
+- Script used to fix the ProductLogEdit trigger to correctly populate the Owner field
+- **IMPORTANT**: This file is preserved for reference and should NOT be deleted even after running
+- It contains the code that was used to modify the database trigger
+
+### add_deleted_flag_to_product.js
+- Original script used to add the soft delete functionality to the Product table
+
+### cleanup_unused_delete_log.js
+- Script used to clean up unused database objects
+
 ## Purpose
 
 These scripts were created to:
 1. Implement soft delete functionality to allow product restoration
 2. Clean up unused database objects that became obsolete with the new approach
-3. Maintain a record of the changes made to the database schema
+3. Fix issues with audit logging
+4. Maintain a record of the changes made to the database schema
+
+**Note:** JavaScript files are preserved for reference and should not be deleted even after running.

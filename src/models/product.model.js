@@ -61,26 +61,73 @@ const Product = {
     // Set the current user ID for logging
     await db.execute("SET @current_user_id = ?", [userId || null]);
     
-    const [
-      result
-    ] = await db.execute(
-      "UPDATE Product SET ProductName = ?, ProductModel = ?, Manufacturer = ?, ProductTypeId = ?, AssetCode = ?, SerialNumber = ?, ServiceTag = ?, HD = ?, RAM = ?, CPU = ?, Status = ?, YearBought = ? WHERE Id = ?",
-      [
-        data.productName || null,
-        data.productModel || null,
-        data.manufacturer || null,
-        data.productTypeId || null,
-        data.assetCode || null,
-        data.serialNumber || null,
-        data.serviceTag || null,
-        data.hd || null,
-        data.ram || null,
-        data.cpu || null,
-        data.status || null,
-        data.yearBought || null,
-        id
-      ]
-    );
+    // Prevent accidentally clearing system information during PUT requests
+    // Only update HD, RAM, CPU if they are explicitly provided and not empty/null
+    const updateFields = [];
+    const updateValues = [];
+    
+    // Always update these fields if provided
+    if (data.productName !== undefined) {
+      updateFields.push("ProductName = ?");
+      updateValues.push(data.productName || null);
+    }
+    if (data.productModel !== undefined) {
+      updateFields.push("ProductModel = ?");
+      updateValues.push(data.productModel || null);
+    }
+    if (data.manufacturer !== undefined) {
+      updateFields.push("Manufacturer = ?");
+      updateValues.push(data.manufacturer || null);
+    }
+    if (data.productTypeId !== undefined) {
+      updateFields.push("ProductTypeId = ?");
+      updateValues.push(data.productTypeId || null);
+    }
+    if (data.assetCode !== undefined) {
+      updateFields.push("AssetCode = ?");
+      updateValues.push(data.assetCode || null);
+    }
+    if (data.serialNumber !== undefined) {
+      updateFields.push("SerialNumber = ?");
+      updateValues.push(data.serialNumber || null);
+    }
+    if (data.serviceTag !== undefined) {
+      updateFields.push("ServiceTag = ?");
+      updateValues.push(data.serviceTag || null);
+    }
+    if (data.status !== undefined) {
+      updateFields.push("Status = ?");
+      updateValues.push(data.status || null);
+    }
+    if (data.yearBought !== undefined) {
+      updateFields.push("YearBought = ?");
+      updateValues.push(data.yearBought || null);
+    }
+    
+    // Only update system info if explicitly provided with actual values
+    if (data.hd !== undefined && data.hd !== null && data.hd !== '') {
+      updateFields.push("HD = ?");
+      updateValues.push(data.hd);
+    }
+    if (data.ram !== undefined && data.ram !== null && data.ram !== '') {
+      updateFields.push("RAM = ?");
+      updateValues.push(data.ram);
+    }
+    if (data.cpu !== undefined && data.cpu !== null && data.cpu !== '') {
+      updateFields.push("CPU = ?");
+      updateValues.push(data.cpu);
+    }
+    
+    // If no fields to update, return 0
+    if (updateFields.length === 0) {
+      return 0;
+    }
+    
+    // Add ID for WHERE clause
+    updateValues.push(id);
+    
+    const query = `UPDATE Product SET ${updateFields.join(', ')} WHERE Id = ?`;
+    const [result] = await db.execute(query, updateValues);
     return result.affectedRows;
   },
   async delete(id, userId) {
