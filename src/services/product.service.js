@@ -66,6 +66,12 @@ const ProductService = {
     },
     getDeleted() {
         return Product.findDeleted();
+    },
+    getEditLogs(productId) {
+        return Product.getEditLogs(productId);
+    },
+    searchEditLogs(search, productId) {
+        return Product.searchEditLogs(search, productId);
     }
 };
 

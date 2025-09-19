@@ -150,6 +150,47 @@ const Product = {
     // Find all deleted products
     const [rows] = await db.execute("SELECT * FROM Product WHERE deleted = TRUE ORDER BY id DESC");
     return rows;
+  },
+  async getEditLogs(productId) {
+    // Get all edit logs for a specific product
+    const [rows] = await db.execute(
+      `SELECT ple.*, u.Username as EditorName, e.Name as OwnerName 
+       FROM ProductLogEdit ple 
+       LEFT JOIN User u ON ple.EditBy = u.Id 
+       LEFT JOIN Employee e ON ple.Owner = e.Id 
+       WHERE ple.ProductId = ? 
+       ORDER BY ple.DateTimeEdit DESC`,
+      [productId]
+    );
+    return rows;
+  },
+  async searchEditLogs(search, productId) {
+    // Search edit logs with optional product filter
+    const params = [];
+    const where = [];
+    
+    if (productId) {
+      where.push("ple.ProductId = ?");
+      params.push(productId);
+    }
+    
+    if (search) {
+      where.push("(ple.ProductName LIKE ? OR ple.AssetCode LIKE ? OR ple.SerialNumber LIKE ? OR ple.ServiceTag LIKE ?)");
+      const s = `%${search}%`;
+      params.push(s, s, s, s);
+    }
+    
+    const whereClause = where.length ? 'WHERE ' + where.join(' AND ') : '';
+    const [rows] = await db.execute(
+      `SELECT ple.*, u.Username as EditorName, e.Name as OwnerName 
+       FROM ProductLogEdit ple 
+       LEFT JOIN User u ON ple.EditBy = u.Id 
+       LEFT JOIN Employee e ON ple.Owner = e.Id 
+       ${whereClause}
+       ORDER BY ple.DateTimeEdit DESC`,
+      params
+    );
+    return rows;
   }
 };
 

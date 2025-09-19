@@ -100,6 +100,28 @@ const ProductController = {
       console.error(error);
       res.status(500).json({ error: "Failed to fetch deleted products" });
     }
+  },
+  
+  async getEditLogs(req, res) {
+    try {
+      const productId = req.params.id;
+      const logs = await ProductService.getEditLogs(productId);
+      res.json(logs);
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: "Failed to fetch product edit logs" });
+    }
+  },
+  
+  async searchEditLogs(req, res) {
+    try {
+      const { search, productId } = req.query;
+      const logs = await ProductService.searchEditLogs(search, productId);
+      res.json(logs);
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: "Failed to search product edit logs" });
+    }
   }
 };
 
