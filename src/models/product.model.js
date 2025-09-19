@@ -36,6 +36,9 @@ const Product = {
   async findAll(search, status) {
     const params = [];
     const where = [];
+    // Exclude deleted products by default
+    where.push("deleted = FALSE");
+    
     if (typeof status !== 'undefined') {
       where.push("Status = ?");
       params.push(status);
@@ -50,7 +53,7 @@ const Product = {
     return rows;
   },
   async findById(id) {
-    const [rows] = await db.execute("SELECT * FROM Product WHERE id = ?", [id]);
+    const [rows] = await db.execute("SELECT * FROM Product WHERE id = ? AND deleted = FALSE", [id]);
     return rows[0] || null;
   },
   async update(id, data, userId) {
@@ -83,8 +86,22 @@ const Product = {
     // Set the current user ID for logging
     await db.execute("SET @current_user_id = ?", [userId || null]);
     
-    const [result] = await db.execute("DELETE FROM Product WHERE Id = ?", [id]);
+    // Instead of deleting, mark as deleted (soft delete)
+    const [result] = await db.execute("UPDATE Product SET deleted = TRUE WHERE Id = ?", [id]);
     return result.affectedRows;
+  },
+  async restore(id, userId) {
+    // Set the current user ID for logging
+    await db.execute("SET @current_user_id = ?", [userId || null]);
+    
+    // Restore a deleted product
+    const [result] = await db.execute("UPDATE Product SET deleted = FALSE WHERE Id = ?", [id]);
+    return result.affectedRows;
+  },
+  async findDeleted() {
+    // Find all deleted products
+    const [rows] = await db.execute("SELECT * FROM Product WHERE deleted = TRUE ORDER BY id DESC");
+    return rows;
   }
 };
 

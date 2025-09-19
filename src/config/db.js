@@ -10,6 +10,7 @@ const conn = mysql2.createPool({
     password,
     database,
     // keep date/time columns as strings (avoid implicit conversion to JS Date)
-    dateStrings: true
+    dateStrings: true,
+    multipleStatements: true
 })
 module.exports = conn;

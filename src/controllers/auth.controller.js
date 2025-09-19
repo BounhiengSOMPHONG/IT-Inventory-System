@@ -19,7 +19,7 @@ const AuthController = {
     if (!username || !password) return res.status(400).json({ message: 'Missing fields' });
     const user = await UserService.findByUsername(username);
     if (!user) return res.status(401).json({ message: 'Invalid credentials' });
-    const stored = user.password;
+    const stored = user.Password;
     let valid = false;
     // If password looks like bcrypt hash, compare with bcrypt; otherwise allow legacy plain-text match and re-hash
     if (stored && stored.startsWith('$2')) {
@@ -29,13 +29,13 @@ const AuthController = {
       if (valid) {
         const salt = await bcrypt.genSalt(10);
         const newHash = await bcrypt.hash(password, salt);
-        await UserService.updatePassword(user.id, newHash);
+        await UserService.updatePassword(user.Id, newHash);
       }
     }
 
     if (!valid) return res.status(401).json({ message: 'Invalid credentials' });
-    const token = jwt.sign({ sub: user.id, username: user.username, role: user.role }, process.env.JWT_SECRET || 'change-me', { expiresIn: '7d' });
-    res.json({ token, user: { id: user.id, username: user.username, role: user.role, image: user.image } });
+    const token = jwt.sign({ sub: user.Id, username: user.Username, role: user.Role }, process.env.JWT_SECRET || 'change-me', { expiresIn: '7d' });
+    res.json({ token, user: { id: user.Id, username: user.Username, role: user.Role, image: user.Image } });
   }
 };
 

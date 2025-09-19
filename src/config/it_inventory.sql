@@ -196,21 +196,7 @@ INSERT INTO `Product` (`Id`, `ProductName`, `ProductModel`, `Manufacturer`, `Pro
 --
 -- Triggers `Product`
 --
-DELIMITER $$
-CREATE TRIGGER `tr_product_delete_log` BEFORE DELETE ON `Product` FOR EACH ROW BEGIN
-    INSERT INTO ProductLogDelete (
-        ProductName, ProductTypeId, Owner, AssetCode, 
-        SerialNumber, ServiceTag, CPU, RAM, HD, DeleteBy
-    ) VALUES (
-        OLD.ProductName, OLD.ProductTypeId,
-        (SELECT EmployeeId FROM Service WHERE AssetCode = OLD.AssetCode ORDER BY Id DESC LIMIT 1),
-        OLD.AssetCode, OLD.SerialNumber, OLD.ServiceTag,
-        OLD.CPU, OLD.RAM, OLD.HD, @current_user_id
-    );
-END
-$$
-DELIMITER ;
-DELIMITER $$
+DELIMITER $
 CREATE TRIGGER `tr_product_edit_log` BEFORE UPDATE ON `Product` FOR EACH ROW BEGIN
     INSERT INTO ProductLogEdit (
         ProductId, ProductName, ProductTypeId, Owner, AssetCode, 
@@ -222,31 +208,8 @@ CREATE TRIGGER `tr_product_edit_log` BEFORE UPDATE ON `Product` FOR EACH ROW BEG
         OLD.CPU, OLD.RAM, OLD.HD, @current_user_id
     );
 END
-$$
+$
 DELIMITER ;
-
--- --------------------------------------------------------
-
---
--- Table structure for table `ProductLogDelete`
---
-
-CREATE TABLE `ProductLogDelete` (
-  `Id` int NOT NULL,
-  `ProductName` varchar(100) COLLATE utf8mb4_general_ci NOT NULL,
-  `ProductTypeId` int DEFAULT NULL,
-  `Owner` int DEFAULT NULL,
-  `AssetCode` varchar(50) COLLATE utf8mb4_general_ci DEFAULT NULL,
-  `SerialNumber` varchar(100) COLLATE utf8mb4_general_ci DEFAULT NULL,
-  `ServiceTag` varchar(100) COLLATE utf8mb4_general_ci DEFAULT NULL,
-  `CPU` varchar(100) COLLATE utf8mb4_general_ci DEFAULT NULL,
-  `RAM` varchar(50) COLLATE utf8mb4_general_ci DEFAULT NULL,
-  `HD` varchar(50) COLLATE utf8mb4_general_ci DEFAULT NULL,
-  `DateTimeDelete` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
-  `DeleteBy` int DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
--- --------------------------------------------------------
 
 --
 -- Table structure for table `ProductLogEdit`
@@ -473,15 +436,6 @@ ALTER TABLE `Product`
   ADD KEY `idx_product_status` (`Status`);
 
 --
--- Indexes for table `ProductLogDelete`
---
-ALTER TABLE `ProductLogDelete`
-  ADD PRIMARY KEY (`Id`),
-  ADD KEY `ProductTypeId` (`ProductTypeId`),
-  ADD KEY `Owner` (`Owner`),
-  ADD KEY `DeleteBy` (`DeleteBy`);
-
---
 -- Indexes for table `ProductLogEdit`
 --
 ALTER TABLE `ProductLogEdit`
@@ -674,14 +628,6 @@ ALTER TABLE `InstallAntiVirus`
 ALTER TABLE `Product`
   ADD CONSTRAINT `Product_ibfk_1` FOREIGN KEY (`ProductTypeId`) REFERENCES `ProductType` (`Id`),
   ADD CONSTRAINT `Product_ibfk_2` FOREIGN KEY (`AddedBy`) REFERENCES `User` (`Id`);
-
---
--- Constraints for table `ProductLogDelete`
---
-ALTER TABLE `ProductLogDelete`
-  ADD CONSTRAINT `ProductLogDelete_ibfk_1` FOREIGN KEY (`ProductTypeId`) REFERENCES `ProductType` (`Id`),
-  ADD CONSTRAINT `ProductLogDelete_ibfk_2` FOREIGN KEY (`Owner`) REFERENCES `Employee` (`Id`),
-  ADD CONSTRAINT `ProductLogDelete_ibfk_3` FOREIGN KEY (`DeleteBy`) REFERENCES `User` (`Id`);
 
 --
 -- Constraints for table `ProductLogEdit`

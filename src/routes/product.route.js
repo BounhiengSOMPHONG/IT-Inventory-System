@@ -4,10 +4,12 @@ const ProductController = require('../controllers/product.controller');
 const authMiddleware = require('../middleware/auth.middleware');
 
 
-router.post('/', authMiddleware, ProductController.create);
+router.post('/', ProductController.create);
 router.get('/', ProductController.list);
+router.get('/deleted', ProductController.getDeleted);
 router.get('/:id', ProductController.get);
-router.put('/:id', authMiddleware, ProductController.update);
-router.delete('/:id', authMiddleware, ProductController.delete);
+router.put('/:id', ProductController.update);
+router.delete('/:id', ProductController.delete);
+router.patch('/:id/restore', ProductController.restore);
 
 module.exports = router;

@@ -74,6 +74,32 @@ const ProductController = {
       console.error(error);
       res.status(500).json({ error: "Failed to delete product" });
     }
+  },
+  
+  async restore(req, res) {
+    try {
+      const id = req.params.id;
+      // Get user ID from the authenticated user (set by auth middleware)
+      const userId = req.user?.id;
+      const result = await ProductService.restore(id, userId);
+      if (result === 0) {
+        return res.status(404).json({ message: "Product not found" });
+      }
+      res.json({ message: "Product restored successfully" });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: "Failed to restore product" });
+    }
+  },
+  
+  async getDeleted(req, res) {
+    try {
+      const prods = await ProductService.getDeleted();
+      res.json(prods);
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: "Failed to fetch deleted products" });
+    }
   }
 };
 

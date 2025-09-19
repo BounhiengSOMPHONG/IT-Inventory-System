@@ -60,6 +60,12 @@ const ProductService = {
     },
     delete(id, userId) {
         return Product.delete(id, userId);
+    },
+    restore(id, userId) {
+        return Product.restore(id, userId);
+    },
+    getDeleted() {
+        return Product.findDeleted();
     }
 };
 
