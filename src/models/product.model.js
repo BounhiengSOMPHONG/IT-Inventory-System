@@ -39,14 +39,15 @@ const Product = {
     // Exclude deleted products by default
     where.push("deleted = FALSE");
     
-    if (typeof status !== 'undefined') {
+    // Only filter by status if it's explicitly provided and not null/undefined
+    if (status !== undefined && status !== null && status !== '') {
       where.push("Status = ?");
       params.push(status);
     }
     if (search) {
-      where.push("(ProductName LIKE ? OR ProductModel LIKE ? OR Manufacturer LIKE ? OR AssetCode LIKE ? OR SerialNumber LIKE ? OR ServiceTag LIKE ? OR HD LIKE ? OR RAM LIKE ? OR CPU LIKE ?)");
+      where.push("(ProductName LIKE ? OR ProductModel LIKE ? OR Manufacturer LIKE ? OR AssetCode LIKE ? OR SerialNumber LIKE ? OR ServiceTag LIKE ? OR YearBought LIKE ?)");
       const s = `%${search}%`;
-      params.push(s, s, s, s, s, s, s, s, s);
+      params.push(s, s, s, s, s, s, s);
     }
     const sql = `SELECT * FROM Product ${where.length ? 'WHERE ' + where.join(' AND ') : ''} ORDER BY id DESC`;
     const [rows] = await db.execute(sql, params);

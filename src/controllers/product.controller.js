@@ -18,8 +18,8 @@ const ProductController = {
       const { search, status } = req.query;
       const query = {
         search,
-        // Ensure status is a number if it exists, otherwise undefined.
-        status: status !== undefined ? Number(status) : undefined,
+        // Ensure status is a number if it exists and is not empty, otherwise undefined.
+        status: status !== undefined && status !== '' && status !== null ? Number(status) : undefined,
       };
       const prods = await ProductService.list(query);
       res.json(prods);
