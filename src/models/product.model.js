@@ -58,8 +58,12 @@ const Product = {
     return rows[0] || null;
   },
   async update(id, data, userId) {
-    // Set the current user ID for logging
-    await db.execute("SET @current_user_id = ?", [userId || null]);
+    // Determine which user should be recorded as the editor in the DB trigger.
+    // Prefer explicit `data.editBy` from the request body if provided (allows
+    // API clients to set the editor), otherwise fall back to the authenticated user.
+    const dbUserForEdit = (data && data.editBy !== undefined && data.editBy !== null) ? data.editBy : userId;
+    // Set the current user ID for logging (used by the DB trigger to populate EditBy)
+    await db.execute("SET @current_user_id = ?", [dbUserForEdit || null]);
     
     // Prevent accidentally clearing system information during PUT requests
     // Only update HD, RAM, CPU if they are explicitly provided and not empty/null
@@ -82,6 +86,11 @@ const Product = {
     if (data.productTypeId !== undefined) {
       updateFields.push("ProductTypeId = ?");
       updateValues.push(data.productTypeId || null);
+    }
+    // Allow AddedBy to be explicitly updated (owner)
+    if (data.addedBy !== undefined) {
+      updateFields.push("AddedBy = ?");
+      updateValues.push(data.addedBy || null);
     }
     if (data.assetCode !== undefined) {
       updateFields.push("AssetCode = ?");
@@ -118,6 +127,9 @@ const Product = {
       updateValues.push(data.cpu);
     }
     
+    // Ensure EditBy is recorded via DB user variable (used by trigger)
+    // We set @current_user_id earlier at the top of this function.
+
     // If no fields to update, return 0
     if (updateFields.length === 0) {
       return 0;
