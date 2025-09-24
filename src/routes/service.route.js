@@ -4,6 +4,8 @@ const ServiceController = require('../controllers/service.controller');
 
 router.post('/', ServiceController.create);
 router.get('/', ServiceController.list);
+router.get('/report', ServiceController.exportReport);
+router.get('/change-report', ServiceController.exportChangeReport);
 router.get('/:id', ServiceController.get);
 router.put('/:id', ServiceController.update);
 router.delete('/:id', ServiceController.remove);

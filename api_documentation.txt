@@ -1,0 +1,516 @@
+IT INVENTORY SYSTEM - API DOCUMENTATION
+=====================================
+
+1. DEPARTMENT ENDPOINTS
+----------------------
+CRUD operations for departments
+
+GET /api/departments
+- Get all departments
+- Query params: search (optional)
+- Example: GET /api/departments
+
+POST /api/departments
+- Create a new department
+- Request body: {"name": "New Department Name"}
+- Example: POST /api/departments {"name": "Finance Department"}
+
+GET /api/departments/:id
+- Get a specific department
+- Example: GET /api/departments/1
+
+PUT /api/departments/:id
+- Update a department
+- Requires: {"name": "Updated Department Name"}
+- Example: PUT /api/departments/1 {"name": "Updated Finance Department"}
+
+DELETE /api/departments/:id
+- Delete a department
+- Example: DELETE /api/departments/1
+
+
+2. EMPLOYEE ENDPOINTS
+---------------------
+CRUD operations for employees
+
+GET /api/employees
+- Get all employees
+- Query params: search (optional)
+- Example: GET /api/employees
+
+POST /api/employees
+- Create a new employee
+- Request body: {"name": "John Doe", "departmentId": 1, "remark": "IT Manager"}
+- Example: POST /api/employees {"name": "Jane Smith", "departmentId": 2, "remark": "HR Specialist"}
+
+GET /api/employees/:id
+- Get a specific employee
+- Example: GET /api/employees/1
+
+PUT /api/employees/:id
+- Update an employee
+- Example: PUT /api/employees/1 {"name": "Updated Name", "departmentId": 1}
+
+DELETE /api/employees/:id
+- Delete an employee
+- Example: DELETE /api/employees/1
+
+
+3. PRODUCT TYPE ENDPOINTS
+-------------------------
+CRUD operations for product types
+
+GET /api/producttypes
+- Get all product types
+- Query params: search (optional)
+- Example: GET /api/producttypes
+
+POST /api/producttypes
+- Create a new product type
+- Request body: {"name": "Laptop"}
+- Example: POST /api/producttypes {"name": "Desktop Computer"}
+
+GET /api/producttypes/:id
+- Get a specific product type
+- Example: GET /api/producttypes/1
+
+PUT /api/producttypes/:id
+- Update a product type
+- Example: PUT /api/producttypes/1 {"name": "Updated Product Type"}
+
+DELETE /api/producttypes/:id
+- Delete a product type
+- Example: DELETE /api/producttypes/1
+
+
+4. PRODUCT ENDPOINTS
+--------------------
+CRUD operations for products with Active/Inactive status
+
+GET /api/products
+- Get all products
+- Query params: search, status (Active/Inactive)
+- Example: GET /api/products?status=Active
+- Example: GET /api/products?search=Dell
+
+POST /api/products
+- Create a new product
+- Request body: {productName, productModel, manufacturer, productTypeId, assetCode, serialNumber, serviceTag, hd, ram, cpu, status, addedBy, yearBought}
+- Example: 
+  POST /api/products
+  {
+    "productName": "Dell Laptop",
+    "productModel": "XPS 13",
+    "manufacturer": "Dell",
+    "productTypeId": 1,
+    "assetCode": "IT005",
+    "serialNumber": "DL123456",
+    "status": "Inactive",
+    "addedBy": 1,
+    "yearBought": "2023"
+  }
+
+GET /api/products/inactive
+- Get only inactive products (for creating service records)
+- Example: GET /api/products/inactive
+
+GET /api/products/deleted
+- Get deleted products (admin only)
+- Example: GET /api/products/deleted
+
+GET /api/products/:id
+- Get a specific product
+- Example: GET /api/products/1
+
+GET /api/products/:id/edit-logs
+- Get edit logs for a specific product (admin only)
+- Example: GET /api/products/1/edit-logs
+
+PUT /api/products/:id
+- Update a product
+- Example: PUT /api/products/1 {"productName": "Updated Product Name"}
+
+DELETE /api/products/:id
+- Delete a product
+- Example: DELETE /api/products/1
+
+PATCH /api/products/:id/restore
+- Restore a deleted product (admin only)
+- Example: PATCH /api/products/1/restore
+
+GET /api/products/report
+- Export products report to Excel
+- Query params: status (Active/Inactive)
+- Example: GET /api/products/report?status=Active
+- Example: GET /api/products/report (all products)
+
+GET /api/products/change-report
+- Export product change logs to Excel (admin only)
+- Query params: search, productId
+- Example: GET /api/products/change-report
+
+
+5. STATUS ENDPOINTS
+-------------------
+CRUD operations for statuses (Using, Stock, Broken, etc.)
+
+GET /api/statuses
+- Get all statuses
+- Query params: search (optional)
+- Example: GET /api/statuses
+
+POST /api/statuses
+- Create a new status
+- Request body: {"name": "New Status"}
+- Example: POST /api/statuses {"name": "Under Repair"}
+
+GET /api/statuses/:id
+- Get a specific status
+- Example: GET /api/statuses/1
+
+PUT /api/statuses/:id
+- Update a status
+- Example: PUT /api/statuses/1 {"name": "Updated Status Name"}
+
+DELETE /api/statuses/:id
+- Delete a status
+- Example: DELETE /api/statuses/1
+
+
+6. SERVICE ENDPOINTS
+--------------------
+CRUD operations for services
+
+GET /api/services
+- Get all services
+- Query params: statusId, employeeId
+- Example: GET /api/services?statusId=1
+- Example: GET /api/services?employeeId=1
+
+POST /api/services
+- Create a new service
+- Request body: {employeeId, assetCode, date, statusId, serviceBy, remark}
+- Example:
+  POST /api/services
+  {
+    "employeeId": 1,
+    "assetCode": "IT001",
+    "date": "2023-10-15",
+    "statusId": 1,
+    "serviceBy": 1,
+    "remark": "Assigned to employee"
+  }
+
+GET /api/services/:id
+- Get a specific service
+- Example: GET /api/services/1
+
+PUT /api/services/:id
+- Update a service
+- Example: PUT /api/services/1 {"statusId": 2}
+
+DELETE /api/services/:id
+- Delete a service
+- Example: DELETE /api/services/1
+
+POST /api/services/assign
+- Assign a product to an employee
+- Request body: {assetCode, employeeId, remark}
+- Example:
+  POST /api/services/assign
+  {
+    "assetCode": "IT002",
+    "employeeId": 2,
+    "remark": "New laptop assignment"
+  }
+
+POST /api/services/return
+- Return a product to stock
+- Request body: {assetCode, remark}
+- Example:
+  POST /api/services/return
+  {
+    "assetCode": "IT002",
+    "remark": "Returned by employee"
+  }
+
+GET /api/services/report
+- Export services report to Excel
+- Query params: statusId
+- Example: GET /api/services/report?statusId=1
+- Example: GET /api/services/report (all services)
+
+GET /api/services/change-report
+- Export service change report to Excel
+- Example: GET /api/services/change-report
+
+
+7. USER ENDPOINTS
+-----------------
+CRUD operations for users
+
+GET /api/users
+- Get all users (admin only)
+- Query params: search (optional)
+- Example: GET /api/users
+
+POST /api/users
+- Create a new user
+- Request body: {username, password, image, role}
+- Example:
+  POST /api/users
+  {
+    "username": "newuser",
+    "password": "securepassword",
+    "role": "User"
+  }
+
+GET /api/users/:id
+- Get a specific user (auth required)
+- Example: GET /api/users/1
+
+PUT /api/users/:id
+- Update a user (auth required)
+- Example: PUT /api/users/1 {"username": "updateduser", "role": "Admin"}
+
+DELETE /api/users/:id
+- Delete a user (admin only)
+- Example: DELETE /api/users/1
+
+
+8. AUTHENTICATION ENDPOINTS
+---------------------------
+Authentication and authorization
+
+POST /api/auth/register
+- Register a new user
+- Request body: {username, password, image, role}
+- Example:
+  POST /api/auth/register
+  {
+    "username": "testuser",
+    "password": "testpassword",
+    "role": "User"
+  }
+
+POST /api/auth/login
+- Login user and get JWT token
+- Request body: {username, password}
+- Example:
+  POST /api/auth/login
+  {
+    "username": "testuser",
+    "password": "testpassword"
+  }
+
+POST /api/auth/change-password
+- Change user password (auth required)
+- Request body: {currentPassword, newPassword}
+- Example:
+  POST /api/auth/change-password (with auth header)
+  {
+    "currentPassword": "oldpassword",
+    "newPassword": "newpassword"
+  }
+
+
+9. INSTALL ANTI-VIRUS ENDPOINTS
+------------------------------
+CRUD operations for anti-virus installations
+
+GET /api/antivirus
+- Get all anti-virus records
+- Query params: search (optional)
+- Example: GET /api/antivirus
+
+POST /api/antivirus
+- Create a new anti-virus installation record
+- Request body: {computerName, owner, assetCode, remark, status}
+- Example:
+  POST /api/antivirus
+  {
+    "computerName": "PC-001",
+    "owner": 1,
+    "assetCode": "IT001",
+    "status": "Installed",
+    "remark": "Installed latest version"
+  }
+
+GET /api/antivirus/export
+- Export anti-virus report to Excel
+- Query params: search (optional)
+- Example: GET /api/antivirus/export
+
+GET /api/antivirus/:id
+- Get a specific anti-virus record
+- Example: GET /api/antivirus/1
+
+PUT /api/antivirus/:id
+- Update an anti-virus record
+- Example: PUT /api/antivirus/1 {"status": "Pending"}
+
+DELETE /api/antivirus/:id
+- Delete an anti-virus record
+- Example: DELETE /api/antivirus/1
+
+
+10. REPLACED ITEMS ENDPOINTS
+---------------------------
+CRUD operations for replaced items
+
+GET /api/replaced-items
+- Get all replaced items
+- Query params: search (optional)
+- Example: GET /api/replaced-items
+
+POST /api/replaced-items
+- Create a new replaced item record
+- Request body: {productName, owner, date, replacedBy, remark}
+- Example:
+  POST /api/replaced-items
+  {
+    "productName": "Old Monitor",
+    "owner": 1,
+    "date": "2023-10-15",
+    "replacedBy": 1,
+    "remark": "Replaced with new model"
+  }
+
+GET /api/replaced-items/export
+- Export replaced items report to Excel
+- Query params: search (optional)
+- Example: GET /api/replaced-items/export
+
+GET /api/replaced-items/:id
+- Get a specific replaced item
+- Example: GET /api/replaced-items/1
+
+PUT /api/replaced-items/:id
+- Update a replaced item record
+- Example: PUT /api/replaced-items/1 {"remark": "Updated replacement details"}
+
+DELETE /api/replaced-items/:id
+- Delete a replaced item record
+- Example: DELETE /api/replaced-items/1
+
+
+11. DAILY SUPPORT ENDPOINTS
+--------------------------
+CRUD operations for daily support
+
+GET /api/daily-support
+- Get all daily support records
+- Query params: search (optional)
+- Example: GET /api/daily-support
+
+POST /api/daily-support
+- Create a new daily support record
+- Request body: {date, requestBy, problem, reason, dateSolved, fixBy}
+- Example:
+  POST /api/daily-support
+  {
+    "date": "2023-10-15",
+    "requestBy": 1,
+    "problem": "Computer not starting",
+    "reason": "Power supply issue",
+    "dateSolved": "2023-10-16",
+    "fixBy": 1
+  }
+
+GET /api/daily-support/export
+- Export daily support report to Excel
+- Query params: search (optional)
+- Example: GET /api/daily-support/export
+
+GET /api/daily-support/report
+- Export daily support report with date range to Excel
+- Query params: startDate, endDate, period (weekly/monthly)
+- Example: GET /api/daily-support/report?startDate=2023-10-01&endDate=2023-10-31&period=monthly
+
+GET /api/daily-support/:id
+- Get a specific daily support record
+- Example: GET /api/daily-support/1
+
+PUT /api/daily-support/:id
+- Update a daily support record
+- Example: PUT /api/daily-support/1 {"dateSolved": "2023-10-17"}
+
+DELETE /api/daily-support/:id
+- Delete a daily support record
+- Example: DELETE /api/daily-support/1
+
+
+12. BORROW ENDPOINTS
+-------------------
+CRUD operations for borrow items
+
+GET /api/borrow
+- Get all borrow records
+- Query params: search (optional)
+- Example: GET /api/borrow
+
+GET /api/borrow/search
+- Search borrow records
+- Query params: q (search query)
+- Example: GET /api/borrow/search?q=laptop
+
+POST /api/borrow
+- Create a new borrow record
+- Request body: {productName, date, remark, borrowBy, dateReturn, status, returnRemark}
+- Example:
+  POST /api/borrow
+  {
+    "productName": "Laptop",
+    "date": "2023-10-15",
+    "borrowBy": 1,
+    "status": "Borrowing",
+    "remark": "For project work"
+  }
+
+GET /api/borrow/export
+- Export borrow report to Excel
+- Query params: search (optional)
+- Example: GET /api/borrow/export
+
+GET /api/borrow/borrowing
+- Get currently borrowing items
+- Example: GET /api/borrow/borrowing
+
+GET /api/borrow/:id
+- Get a specific borrow record
+- Example: GET /api/borrow/1
+
+PUT /api/borrow/:id
+- Update a borrow record
+- Example: PUT /api/borrow/1 {"status": "Returned", "dateReturn": "2023-10-20", "returnRemark": "Returned in good condition"}
+
+DELETE /api/borrow/:id
+- Delete a borrow record
+- Example: DELETE /api/borrow/1
+
+
+AUTHENTICATION
+--------------
+Most endpoints require authentication using JWT tokens.
+Include in request header: Authorization: Bearer {token}
+
+Admin endpoints require admin role:
+- GET /api/users
+- GET /api/products/deleted
+- GET /api/products/:id/edit-logs
+- PATCH /api/products/:id/restore
+- DELETE /api/users/:id
+- PUT /api/products/:id (uses auth info)
+
+ERROR RESPONSES
+---------------
+Standard error format:
+{
+  "error": "Error message"
+}
+
+Success responses typically return:
+{
+  "message": "Success message",
+  "data": { ... }
+}

@@ -1,5 +1,5 @@
 const ProductService = require("../services/product.service");
-
+const xlsx = require('xlsx');
 
 const ProductController = {
   async create(req, res) {
@@ -132,6 +132,121 @@ const ProductController = {
     } catch (error) {
       console.error(error);
       res.status(500).json({ error: "Failed to search product edit logs" });
+    }
+  },
+  
+  async exportReport(req, res) {
+    try {
+      const { status } = req.query;
+      const query = {
+        search: null,
+        status: status || undefined  // This will allow filtering by status (Active/Inactive)
+      };
+      
+      const products = await ProductService.list(query);
+      
+      // Prepare report title
+      let reportTitle = 'Product Report';
+      if (status) {
+        reportTitle = `Product Report - ${status}`;
+      } else {
+        reportTitle = 'All Products Report';
+      }
+      
+      // Add report title and headers to the data
+      const excelData = [
+        [reportTitle],
+        ['ID', 'Product Name', 'Product Model', 'Manufacturer', 'Product Type', 'Asset Code', 'Serial Number', 'Service Tag', 'HD', 'RAM', 'CPU', 'Status', 'Added By', 'Date Added', 'Year Bought'],
+        ...products.map(product => [
+          product.Id,
+          product.ProductName,
+          product.ProductModel || 'N/A',
+          product.Manufacturer || 'N/A',
+          product.ProductType || 'N/A',
+          product.AssetCode || 'N/A',
+          product.SerialNumber || 'N/A',
+          product.ServiceTag || 'N/A',
+          product.HD || 'N/A',
+          product.RAM || 'N/A',
+          product.CPU || 'N/A',
+          product.Status,
+          product.AddedByName || 'N/A',
+          product.DateAdd,
+          product.YearBought
+        ])
+      ];
+      
+      // Create worksheet
+      const ws = xlsx.utils.aoa_to_sheet(excelData);
+      
+      // Create a new workbook
+      const wb = xlsx.utils.book_new();
+      
+      // Add worksheet to workbook
+      xlsx.utils.book_append_sheet(wb, ws, 'Products');
+      
+      // Generate buffer
+      const buffer = xlsx.write(wb, { bookType: 'xlsx', type: 'buffer' });
+      
+      // Set response headers for Excel file
+      res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+      res.setHeader('Content-Disposition', `attachment; filename=products_${status || 'all'}_report.xlsx`);
+      
+      // Send the buffer
+      res.send(buffer);
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: 'Failed to export product report to Excel' });
+    }
+  },
+  
+  async exportChangeReport(req, res) {
+    try {
+      const { search, productId } = req.query;
+      const logs = await ProductService.searchEditLogs(search, productId);
+      
+      // Add report title and headers to the data
+      const excelData = [
+        ['Product Change Report (Add, Delete, Edit)'],
+        ['ID', 'Product ID', 'Product Name', 'Product Type', 'Owner', 'Asset Code', 'Serial Number', 'Service Tag', 'CPU', 'RAM', 'HD', 'Date Time Edit', 'Edit By'],
+        ...logs.map(log => [
+          log.Id,
+          log.ProductId,
+          log.ProductName,
+          log.ProductType || 'N/A',
+          log.OwnerName || 'N/A',
+          log.AssetCode || 'N/A',
+          log.SerialNumber || 'N/A',
+          log.ServiceTag || 'N/A',
+          log.CPU || 'N/A',
+          log.RAM || 'N/A',
+          log.HD || 'N/A',
+          log.DateTimeEdit,
+          log.EditByName || 'N/A'
+        ])
+      ];
+      
+      // Create worksheet
+      const ws = xlsx.utils.aoa_to_sheet(excelData);
+      
+      // Create a new workbook
+      const wb = xlsx.utils.book_new();
+      
+      // Add worksheet to workbook
+      xlsx.utils.book_append_sheet(wb, ws, 'Product Changes');
+      
+      // Generate buffer
+      const buffer = xlsx.write(wb, { bookType: 'xlsx', type: 'buffer' });
+      
+      // Set response headers for Excel file
+      res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+      res.setHeader('Content-Disposition', 'attachment; filename=product_changes_report.xlsx');
+      
+      // Send the buffer
+      res.send(buffer);
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: 'Failed to export product change report to Excel' });
     }
   }
 };

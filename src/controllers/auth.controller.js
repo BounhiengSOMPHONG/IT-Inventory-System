@@ -1,6 +1,7 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const UserService = require('../services/user.service');
+const authMiddleware = require('../middleware/auth.middleware');
 
 const AuthController = {
   async register(req, res) {
@@ -36,6 +37,35 @@ const AuthController = {
     if (!valid) return res.status(401).json({ message: 'Invalid credentials' });
     const token = jwt.sign({ sub: user.Id, username: user.Username, role: user.Role }, process.env.JWT_SECRET || 'change-me', { expiresIn: '7d' });
     res.json({ token, user: { id: user.Id, username: user.Username, role: user.Role, image: user.Image } });
+  },
+  
+  async changePassword(req, res) {
+    const { currentPassword, newPassword } = req.body;
+    if (!currentPassword || !newPassword) return res.status(400).json({ message: 'Current password and new password are required' });
+    
+    try {
+      // Get user from the authenticated request
+      const userId = req.user.id;
+      const user = await UserService.findById(userId);
+      
+      if (!user) return res.status(404).json({ message: 'User not found' });
+      
+      // Verify current password
+      const valid = await bcrypt.compare(currentPassword, user.Password);
+      if (!valid) return res.status(401).json({ message: 'Current password is incorrect' });
+      
+      // Hash new password
+      const salt = await bcrypt.genSalt(10);
+      const newPasswordHash = await bcrypt.hash(newPassword, salt);
+      
+      // Update password
+      await UserService.updatePassword(userId, newPasswordHash);
+      
+      res.json({ message: 'Password updated successfully' });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: 'Failed to update password' });
+    }
   }
 };
 
