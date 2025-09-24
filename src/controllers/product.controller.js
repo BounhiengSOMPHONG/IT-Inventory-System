@@ -18,8 +18,8 @@ const ProductController = {
       const { search, status } = req.query;
       const query = {
         search,
-        // Ensure status is a number if it exists and is not empty, otherwise undefined.
-        status: status !== undefined && status !== '' && status !== null ? Number(status) : undefined,
+        // Accept status as a friendly name (e.g. 'Using','Stock') or enum value 'Active'/'Inactive'
+        status: status !== undefined && status !== '' && status !== null ? status : undefined,
       };
       const prods = await ProductService.list(query);
       res.json(prods);
@@ -99,6 +99,17 @@ const ProductController = {
     } catch (error) {
       console.error(error);
       res.status(500).json({ error: "Failed to fetch deleted products" });
+    }
+  },
+
+  // Return products that are Inactive (for creating service records)
+  async getInactive(req, res) {
+    try {
+      const prods = await ProductService.list({ search: null, status: 'Inactive' });
+      res.json(prods);
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: 'Failed to fetch inactive products' });
     }
   },
   

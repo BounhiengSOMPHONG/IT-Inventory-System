@@ -4,6 +4,8 @@ const departmentRoutes = require('./routes/department.route');
 const employeeRoutes = require('./routes/employee.route');
 const productTypeRoutes = require('./routes/producttype.route');
 const ProductRoutes = require('./routes/product.route');
+const statusRoutes = require('./routes/status.route');
+const serviceRoutes = require('./routes/service.route');
 const errorHandler = require('./middleware/error.middleware');
 const authRoutes = require('./routes/auth.route');
 const authMiddleware = require('./middleware/auth.middleware');
@@ -19,6 +21,8 @@ app.use('/api/departments', departmentRoutes);
 app.use('/api/employees', employeeRoutes);
 app.use('/api/producttypes', productTypeRoutes);
 app.use('/api/products',ProductRoutes);
+app.use('/api/statuses', statusRoutes);
+app.use('/api/services', serviceRoutes);
 // Auth routes
 app.use('/api/auth', authRoutes);
 

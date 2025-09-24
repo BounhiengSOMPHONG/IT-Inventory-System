@@ -7,6 +7,7 @@ const adminMiddleware = require('../middleware/admin.middleware');
 
 router.post('/', ProductController.create);
 router.get('/', ProductController.list);
+router.get('/inactive', ProductController.getInactive);
 router.get('/deleted', adminMiddleware, ProductController.getDeleted);
 router.get('/edit-logs', adminMiddleware, ProductController.searchEditLogs);
 router.get('/:id', ProductController.get);

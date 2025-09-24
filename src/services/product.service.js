@@ -50,6 +50,7 @@ const ProductService = {
         return data;
     },
     list(query) {
+        // Accept status filter that can be string names or numeric ids.
         return Product.findAll(query.search, query.status);
     },
     get(id) {

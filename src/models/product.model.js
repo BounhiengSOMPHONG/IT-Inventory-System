@@ -40,9 +40,21 @@ const Product = {
     where.push("deleted = FALSE");
     
     // Only filter by status if it's explicitly provided and not null/undefined
+    // Accept either the exact enum value (e.g. 'Active'/'Inactive') or
+    // friendly names: 'Using' maps to Status='Active', 'Stock' maps to Status='Inactive'.
     if (status !== undefined && status !== null && status !== '') {
-      where.push("Status = ?");
-      params.push(status);
+      const normalized = String(status).toLowerCase();
+      if (normalized === 'using' || normalized === 'active') {
+        where.push("Status = ?");
+        params.push('Active');
+      } else if (normalized === 'stock' || normalized === 'inactive') {
+        where.push("Status = ?");
+        params.push('Inactive');
+      } else {
+        // If caller provides the exact enum value, use it directly
+        where.push("Status = ?");
+        params.push(status);
+      }
     }
     if (search) {
       where.push("(ProductName LIKE ? OR ProductModel LIKE ? OR Manufacturer LIKE ? OR AssetCode LIKE ? OR SerialNumber LIKE ? OR ServiceTag LIKE ? OR YearBought LIKE ?)");
