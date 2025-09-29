@@ -31,6 +31,31 @@
                         </div>
                     @endif
 
+                    <div class="mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                        <form method="GET" action="{{ route('departments.index') }}" class="flex items-center w-full sm:w-auto">
+                            <label for="search" class="sr-only">Search departments</label>
+                            <div class="relative w-full sm:w-72">
+                                <input id="search" name="search" value="{{ old('search', $search ?? '') }}" type="text" placeholder="Search departments..." class="block w-full pl-10 pr-3 py-2 border border-gray-200 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" />
+                                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
+                                    <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-4.35-4.35M11 19a8 8 0 100-16 8 8 0 000 16z" />
+                                    </svg>
+                                </div>
+                            </div>
+                            <button type="submit" class="ml-3 inline-flex items-center px-3 py-2 bg-indigo-600 text-white rounded-md text-sm font-medium">Search</button>
+                            @if(!empty($search))
+                                <a href="{{ route('departments.index') }}" class="ml-2 inline-flex items-center px-3 py-2 bg-gray-100 text-gray-700 rounded-md text-sm">Clear</a>
+                            @endif
+                        </form>
+
+                        <div class="text-sm text-gray-600">
+                            <span class="font-medium">Showing</span>
+                            <span class="ml-1">{{ $departments->firstItem() ?? 0 }}-{{ $departments->lastItem() ?? 0 }}</span>
+                            <span class="mx-1">of</span>
+                            <span class="font-medium">{{ $departments->total() }}</span>
+                        </div>
+                    </div>
+
                     @if($departments->count() > 0)
                         <div class="overflow-x-auto rounded-lg border border-gray-200">
                             <table class="min-w-full divide-y divide-gray-200">
@@ -43,22 +68,29 @@
                                 </thead>
                                 <tbody class="bg-white divide-y divide-gray-200">
                                     @foreach($departments as $department)
-                                    <tr class="hover:bg-gray-50">
+                                    <tr class="hover:bg-gray-50 transition-colors duration-150">
                                         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{{ $department->id }}</td>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $department->department_name }}</td>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                            <div class="flex space-x-3">
+                                            <div class="flex items-center space-x-2">
                                                 <a href="{{ route('departments.edit', $department->id) }}" 
-                                                   class="text-indigo-600 hover:text-indigo-900">
-                                                   Edit
+                                                   class="inline-flex items-center px-3 py-1.5 bg-white border border-gray-200 rounded-md shadow-sm text-sm font-medium text-indigo-600 hover:bg-indigo-50 hover:border-indigo-200 transition-colors">
+                                                    <svg class="-ml-0.5 mr-2 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536M9 11l6-6 3 3-6 6H9v-3z" />
+                                                    </svg>
+                                                    Edit
                                                 </a>
+
                                                 <form action="{{ route('departments.destroy', $department->id) }}" 
                                                       method="POST" 
                                                       class="inline"
                                                       onsubmit="return confirm('Are you sure you want to delete this department?');">
                                                     @csrf
                                                     @method('DELETE')
-                                                    <button type="submit" class="text-red-600 hover:text-red-900">
+                                                    <button type="submit" class="inline-flex items-center px-3 py-1.5 bg-white border border-gray-200 rounded-md shadow-sm text-sm font-medium text-red-600 hover:bg-red-50 hover:border-red-200 transition-colors">
+                                                        <svg class="-ml-0.5 mr-2 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5-4h4a1 1 0 011 1v1H9V4a1 1 0 011-1z" />
+                                                        </svg>
                                                         Delete
                                                     </button>
                                                 </form>
@@ -68,6 +100,10 @@
                                     @endforeach
                                 </tbody>
                             </table>
+                        </div>
+
+                        <div class="mt-4">
+                            {{ $departments->links() }}
                         </div>
                     @else
                         <div class="text-center py-12">

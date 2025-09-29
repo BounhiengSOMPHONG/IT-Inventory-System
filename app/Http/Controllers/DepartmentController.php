@@ -13,8 +13,17 @@ class DepartmentController extends Controller
      */
     public function index()
     {
-        $departments = Department::all();
-        return view('departments.index', compact('departments'));
+        // Add simple search and pagination
+        $search = request()->query('search');
+
+        $query = Department::query();
+        if (!empty($search)) {
+            $query->where('department_name', 'like', "%{$search}%");
+        }
+
+        $departments = $query->orderBy('id', 'desc')->paginate(10)->withQueryString();
+
+        return view('departments.index', compact('departments', 'search'));
     }
 
     /**
