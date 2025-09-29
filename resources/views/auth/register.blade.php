@@ -1,5 +1,5 @@
 <x-guest-layout>
-    <form method="POST" action="{{ route('register') }}" enctype="multipart/form-data">
+    <form id="register-form" method="POST" action="{{ route('register') }}" enctype="multipart/form-data">
         @csrf
 
         <!-- Name -->
@@ -76,14 +76,17 @@
     </form>
 </x-guest-layout>
 
-<script>
+    <script>
 document.addEventListener('DOMContentLoaded', function () {
+    const form = document.getElementById('register-form');
     const input = document.getElementById('avatar');
     const preview = document.getElementById('avatar-preview');
     const placeholder = document.getElementById('avatar-placeholder');
     const filename = document.getElementById('avatar-filename');
     const errorBox = document.getElementById('avatar-error');
     const maxBytes = 10 * 1024 * 1024; // 10 MB
+    const storageKeyPreview = 'register_avatar_preview';
+    const storageKeyName = 'register_avatar_name';
 
     function resetPreview() {
         preview.src = '';
@@ -92,6 +95,18 @@ document.addEventListener('DOMContentLoaded', function () {
         filename.textContent = 'No file chosen';
         errorBox.classList.add('hidden');
         errorBox.textContent = '';
+        localStorage.removeItem(storageKeyPreview);
+        localStorage.removeItem(storageKeyName);
+    }
+
+    // Restore preview from localStorage if available (helps after redirect back)
+    const savedPreview = localStorage.getItem(storageKeyPreview);
+    const savedName = localStorage.getItem(storageKeyName);
+    if (savedPreview) {
+        preview.src = savedPreview;
+        preview.classList.remove('hidden');
+        placeholder.classList.add('hidden');
+        filename.textContent = savedName || '';
     }
 
     input.addEventListener('change', function (e) {
@@ -119,15 +134,45 @@ document.addEventListener('DOMContentLoaded', function () {
             return;
         }
 
-        // Show filename and preview
+        // Show filename and preview and save to localStorage so preview survives redirect
         filename.textContent = file.name;
         placeholder.classList.add('hidden');
         const reader = new FileReader();
         reader.onload = function (ev) {
             preview.src = ev.target.result;
             preview.classList.remove('hidden');
+            try {
+                localStorage.setItem(storageKeyPreview, ev.target.result);
+                localStorage.setItem(storageKeyName, file.name);
+            } catch (err) {
+                // ignore storage errors
+            }
         };
         reader.readAsDataURL(file);
+    });
+
+    // Basic client-side password checks to avoid server-side rejection which clears file input
+    form.addEventListener('submit', function (e) {
+        const password = document.getElementById('password');
+        const passwordConfirmation = document.getElementById('password_confirmation');
+        if (!password || !passwordConfirmation) return;
+
+        const pw = password.value || '';
+        const pwc = passwordConfirmation.value || '';
+        if (pw.length < 8) {
+            alert('รหัสผ่านต้องมีความยาวอย่างน้อย 8 ตัวอักษร');
+            e.preventDefault();
+            return;
+        }
+        if (pw !== pwc) {
+            alert('รหัสผ่านและการยืนยันรหัสผ่านไม่ตรงกัน');
+            e.preventDefault();
+            return;
+        }
+
+        // Clear stored preview when actually submitting (so it doesn't persist)
+        localStorage.removeItem(storageKeyPreview);
+        localStorage.removeItem(storageKeyName);
     });
 });
 </script>
