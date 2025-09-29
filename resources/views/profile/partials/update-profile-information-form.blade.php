@@ -1,6 +1,12 @@
-<form method="post" action="{{ route('profile.update') }}" class="mt-6 space-y-6">
+<form method="post" action="{{ route('profile.update') }}" class="mt-6 space-y-6" enctype="multipart/form-data">
         @csrf
         @method('patch')
+
+    <div>
+        <x-input-label for="avatar" :value="__('Profile Photo')" />
+        <input id="avatar" type="file" name="avatar" accept="image/*" class="mt-1 block w-full" />
+        <x-input-error :messages="$errors->get('avatar')" class="mt-2" />
+    </div>
 
         <div>
             <x-input-label for="name" :value="__('Name')" />
