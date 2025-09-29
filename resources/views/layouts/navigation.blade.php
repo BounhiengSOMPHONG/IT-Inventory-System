@@ -42,8 +42,30 @@
                 <x-application-logo class="h-8 w-auto fill-current text-gray-800" />
             </a>
         </div>
-        <div class="absolute right-4 hidden lg:flex">
-            @include('layouts.settings-dropdown')
+    </div>
+
+    <!-- Sidebar footer (profile) -->
+    <div class="px-4 py-4 border-t border-gray-200 mt-auto">
+        <div class="flex items-center space-x-3">
+            <!-- Avatar placeholder -->
+            <div class="flex-shrink-0">
+                @php $user = Auth::user(); @endphp
+                @if(!empty($user->profile_photo_url))
+                    <img src="{{ $user->profile_photo_url }}" alt="{{ $user->name }}" class="h-10 w-10 rounded-full object-cover">
+                @else
+                    <div class="h-10 w-10 rounded-full bg-gray-200 flex items-center justify-center text-sm font-medium text-gray-700">{{ strtoupper(substr($user->name,0,1)) }}</div>
+                @endif
+            </div>
+
+            <div class="flex-1 min-w-0">
+                <div class="text-sm font-medium text-gray-900 truncate">{{ Auth::user()->name }}</div>
+                <a href="{{ route('profile.edit') }}" class="text-xs text-gray-500 hover:text-gray-700 truncate">{{ __('View profile') }}</a>
+            </div>
+
+            <!-- Settings dropdown (visible on lg+) -->
+            <div class="hidden lg:flex">
+                @include('layouts.settings-dropdown', ['compact' => true])
+            </div>
         </div>
     </div>
 
