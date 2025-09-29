@@ -59,7 +59,7 @@
 
             <div class="flex-1 min-w-0">
                 <div class="text-sm font-medium text-gray-900 truncate">{{ Auth::user()->name }}</div>
-                <a href="{{ route('profile.edit') }}" class="text-xs text-gray-500 hover:text-gray-700 truncate">{{ __('View profile') }}</a>
+                {{-- Removed duplicate 'View profile' link; profile block is provided by sidebar-profile.blade.php --}}
             </div>
 
             <!-- Settings dropdown (visible on lg+) -->
