@@ -15,14 +15,21 @@
                     </svg>
                 </button>
             @else
-                <!-- full trigger: show user name with caret -->
+                <!-- full trigger: show avatar + user name with caret -->
                 <button class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 bg-white hover:text-gray-700 focus:outline-none transition ease-in-out duration-150">
-                    <div>{{ $user->name }}</div>
+                    <div class="flex items-center gap-2">
+                        @if(!empty($user->profile_photo_url))
+                            <img src="{{ $user->profile_photo_url }}" alt="{{ $user->name }}" class="h-6 w-6 rounded-full object-cover">
+                        @else
+                            <div class="h-6 w-6 rounded-full bg-gray-100 flex items-center justify-center text-xs font-medium text-gray-700">{{ strtoupper(substr($user->name,0,1)) }}</div>
+                        @endif
+                        <div>{{ $user->name }}</div>
 
-                    <div class="ms-1">
-                        <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
-                            <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
-                        </svg>
+                        <div class="ms-1">
+                            <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
+                            </svg>
+                        </div>
                     </div>
                 </button>
             @endif

@@ -61,4 +61,18 @@ class User extends Authenticatable
         $name = urlencode($this->name ?? 'User');
         return "https://ui-avatars.com/api/?name={$name}&background=E9E9E9&color=555";
     }
+
+    /**
+     * Backwards-compatible accessor expected by Breeze-style blades.
+     * Returns the public URL for stored avatar or a generated initials avatar.
+     */
+    public function getProfilePhotoUrlAttribute(): string
+    {
+        if ($this->avatar) {
+            return Storage::disk('public')->url($this->avatar);
+        }
+
+        $name = urlencode($this->name ?? 'User');
+        return "https://ui-avatars.com/api/?name={$name}&background=E9E9E9&color=555";
+    }
 }

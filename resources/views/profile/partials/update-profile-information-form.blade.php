@@ -4,10 +4,24 @@
 
     <div>
         <x-input-label for="avatar" :value="__('Profile Photo')" />
-        <input id="avatar" type="file" name="avatar" accept="image/*" class="mt-1 block w-full" />
-        <div id="avatar-hint" class="text-xs text-gray-500">สูงสุด 10 MB, .png/.jpg/.jpeg</div>
-        <x-input-error :messages="$errors->get('avatar')" class="mt-2" />
-    </div>
+
+        <!-- Preview + file input -->
+        <div class="flex items-center gap-4">
+            @php $previewUrl = old('avatar_preview') ?? $user->profile_photo_url; @endphp
+            <div id="avatar-preview" class="h-16 w-16 rounded-full bg-gray-100 overflow-hidden flex items-center justify-center">
+                @if(!empty($previewUrl))
+                    <img id="avatar-preview-img" src="{{ $previewUrl }}" alt="{{ $user->name }}" class="h-full w-full object-cover">
+                @else
+                    <div id="avatar-preview-initial" class="text-sm font-medium text-gray-700">{{ strtoupper(substr($user->name,0,1)) }}</div>
+                @endif
+            </div>
+
+            <div class="flex-1">
+                <input id="avatar" type="file" name="avatar" accept="image/*" class="mt-1 block w-full" />
+                <div id="avatar-hint" class="text-xs text-gray-500">สูงสุด 10 MB, .png/.jpg/.jpeg</div>
+                <x-input-error :messages="$errors->get('avatar')" class="mt-2" />
+            </div>
+        </div>
 
     <script>
     document.getElementById('avatar')?.addEventListener('change', function(e){
@@ -15,6 +29,25 @@
         if(!f) return;
         const mb = (f.size / 1024 / 1024).toFixed(2);
         document.getElementById('avatar-hint').textContent = `ขนาดไฟล์: ${mb} MB`;
+
+        // preview
+        const reader = new FileReader();
+        reader.onload = function(ev){
+            const src = ev.target.result;
+            let img = document.getElementById('avatar-preview-img');
+            const initial = document.getElementById('avatar-preview-initial');
+            if(img){
+                img.src = src;
+            } else {
+                if(initial) initial.remove();
+                img = document.createElement('img');
+                img.id = 'avatar-preview-img';
+                img.className = 'h-full w-full object-cover';
+                img.src = src;
+                document.getElementById('avatar-preview').appendChild(img);
+            }
+        };
+        reader.readAsDataURL(f);
     });
     </script>
 
