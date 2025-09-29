@@ -3,6 +3,7 @@
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DepartmentController;
+use App\Http\Controllers\EmployeeController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -20,6 +21,9 @@ Route::middleware('auth')->group(function () {
     
     // Department routes
     Route::resource('departments', DepartmentController::class);
+
+    // Employee routes
+    Route::resource('employees', EmployeeController::class);
 });
 
 require __DIR__.'/auth.php';

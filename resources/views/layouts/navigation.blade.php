@@ -97,5 +97,18 @@
             </svg>
             Departments
         </a>
+        
+        <a 
+            href="{{ route('employees.index') }}"
+            class="flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors duration-200
+                {{ request()->routeIs('employees.*') 
+                    ? 'bg-purple-100 text-purple-700 border-l-4 border-purple-500' 
+                    : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900' }}"
+        >
+            <svg class="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 10-8 0v4M5 21h14a1 1 0 001-1v-7a4 4 0 00-4-4H8a4 4 0 00-4 4v7a1 1 0 001 1z" />
+            </svg>
+            Employees
+        </a>
     </nav>
 </div>
