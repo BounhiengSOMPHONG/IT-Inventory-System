@@ -40,6 +40,12 @@
         </div>
 
         <div class="flex items-center justify-end mt-4">
+            <div class="w-full mb-4">
+                <x-input-label for="avatar" :value="__('Profile Photo')" />
+                <input id="avatar" type="file" name="avatar" accept="image/*" class="mt-1 block w-full" />
+                <div id="avatar-hint" class="text-xs text-gray-500">สูงสุด 10 MB, .png/.jpg/.jpeg</div>
+                <x-input-error :messages="$errors->get('avatar')" class="mt-2" />
+            </div>
             <a class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" href="{{ route('login') }}">
                 {{ __('Already registered?') }}
             </a>

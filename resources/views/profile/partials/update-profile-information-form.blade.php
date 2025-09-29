@@ -5,8 +5,18 @@
     <div>
         <x-input-label for="avatar" :value="__('Profile Photo')" />
         <input id="avatar" type="file" name="avatar" accept="image/*" class="mt-1 block w-full" />
+        <div id="avatar-hint" class="text-xs text-gray-500">สูงสุด 10 MB, .png/.jpg/.jpeg</div>
         <x-input-error :messages="$errors->get('avatar')" class="mt-2" />
     </div>
+
+    <script>
+    document.getElementById('avatar')?.addEventListener('change', function(e){
+        const f = e.target.files[0];
+        if(!f) return;
+        const mb = (f.size / 1024 / 1024).toFixed(2);
+        document.getElementById('avatar-hint').textContent = `ขนาดไฟล์: ${mb} MB`;
+    });
+    </script>
 
         <div>
             <x-input-label for="name" :value="__('Name')" />
