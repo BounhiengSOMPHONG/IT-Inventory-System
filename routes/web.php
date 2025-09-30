@@ -4,6 +4,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DepartmentController;
 use App\Http\Controllers\EmployeeController;
+use App\Http\Controllers\ProductController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -28,6 +29,11 @@ Route::middleware('auth')->group(function () {
     
     // Product type routes
     Route::resource('product-types', \App\Http\Controllers\ProductTypeController::class);
+
+    // Product routes
+    Route::get('products/logs', [ProductController::class, 'logs'])->name('products.logs');
+    Route::get('products/{product}/restore', [ProductController::class, 'restore'])->name('products.restore');
+    Route::resource('products', ProductController::class);
 });
 
 require __DIR__.'/auth.php';
