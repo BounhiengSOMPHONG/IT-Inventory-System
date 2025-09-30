@@ -54,8 +54,18 @@
                                     @if($log->old_data)
                                     <tr class="bg-gray-50">
                                         <td colspan="4" class="px-6 py-4 text-sm text-gray-700">
-                                            <div class="text-xs font-medium text-gray-600">Previous data snapshot:</div>
-                                            <pre class="mt-2 text-xs bg-white p-3 rounded border border-gray-100 overflow-auto">{{ json_encode($log->old_data, JSON_PRETTY_PRINT|JSON_UNESCAPED_UNICODE) }}</pre>
+                                            <div x-data="{ open: false }" class="space-y-2">
+                                                <div class="flex items-center justify-between">
+                                                    <div class="text-xs font-medium text-gray-600">Previous data snapshot:</div>
+                                                    <button @click="open = !open" class="text-xs text-indigo-600 hover:underline focus:outline-none">
+                                                        <span x-text="open ? 'Hide' : 'Show'"></span>
+                                                    </button>
+                                                </div>
+
+                                                <div x-show="open" x-cloak>
+                                                    <pre class="mt-2 text-xs bg-white p-3 rounded border border-gray-100 overflow-auto">{{ json_encode($log->old_data, JSON_PRETTY_PRINT|JSON_UNESCAPED_UNICODE) }}</pre>
+                                                </div>
+                                            </div>
                                         </td>
                                     </tr>
                                     @endif
