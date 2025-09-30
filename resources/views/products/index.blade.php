@@ -89,6 +89,7 @@
                                                         data-product-model="{{ $product->ProductModel }}"
                                                         data-product-manufacturer="{{ $product->Manufacturer }}"
                                                         data-product-typeid="{{ $product->ProductTypeId }}"
+                                                        data-product-type-name="{{ $product->productType->name ?? '' }}"
                                                         data-product-assetcode="{{ $product->AssetCode }}"
                                                         data-product-serialnumber="{{ $product->SerialNumber }}"
                                                         data-product-servicetag="{{ $product->ServiceTag }}"
@@ -128,7 +129,7 @@
                                         <div><strong>Product Name:</strong> <span id="m-ProductName" class="text-gray-700"></span></div>
                                         <div><strong>Product Model:</strong> <span id="m-ProductModel" class="text-gray-700"></span></div>
                                         <div><strong>Manufacturer:</strong> <span id="m-Manufacturer" class="text-gray-700"></span></div>
-                                        <div><strong>Product Type Id:</strong> <span id="m-ProductTypeId" class="text-gray-700"></span></div>
+                                        <div><strong>Product Type:</strong> <span id="m-ProductTypeName" class="text-gray-700"></span></div>
                                         <div><strong>Asset Code:</strong> <span id="m-AssetCode" class="text-gray-700"></span></div>
                                         <div><strong>Serial Number:</strong> <span id="m-SerialNumber" class="text-gray-700"></span></div>
                                         <div><strong>Service Tag:</strong> <span id="m-ServiceTag" class="text-gray-700"></span></div>
@@ -161,7 +162,7 @@
                                     document.getElementById('m-ProductName').textContent = data.ProductName || '';
                                     document.getElementById('m-ProductModel').textContent = data.ProductModel || '';
                                     document.getElementById('m-Manufacturer').textContent = data.Manufacturer || '';
-                                    document.getElementById('m-ProductTypeId').textContent = data.ProductTypeId || '';
+                                    document.getElementById('m-ProductTypeName').textContent = data.ProductTypeName || data.ProductTypeId || '';
                                     document.getElementById('m-AssetCode').textContent = data.AssetCode || '';
                                     document.getElementById('m-SerialNumber').textContent = data.SerialNumber || '';
                                     document.getElementById('m-ServiceTag').textContent = data.ServiceTag || '';
@@ -200,6 +201,7 @@
                                             AddedBy: this.getAttribute('data-product-addedby'),
                                             DateAdd: this.getAttribute('data-product-dateadd'),
                                             YearBought: this.getAttribute('data-product-yearbought'),
+                                            ProductTypeName: this.getAttribute('data-product-type-name'),
                                         };
 
                                         openModal(data);
