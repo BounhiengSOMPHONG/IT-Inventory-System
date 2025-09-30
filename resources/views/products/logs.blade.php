@@ -51,6 +51,14 @@
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">{{ $log->created_at->format('Y-m-d H:i:s') }}</td>
                                     </tr>
+                                    @if($log->old_data)
+                                    <tr class="bg-gray-50">
+                                        <td colspan="4" class="px-6 py-4 text-sm text-gray-700">
+                                            <div class="text-xs font-medium text-gray-600">Previous data snapshot:</div>
+                                            <pre class="mt-2 text-xs bg-white p-3 rounded border border-gray-100 overflow-auto">{{ json_encode($log->old_data, JSON_PRETTY_PRINT|JSON_UNESCAPED_UNICODE) }}</pre>
+                                        </td>
+                                    </tr>
+                                    @endif
                                     @endforeach
                                 </tbody>
                             </table>

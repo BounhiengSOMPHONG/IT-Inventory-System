@@ -90,12 +90,16 @@ class ProductController extends Controller
             'YearBought' => 'required|digits:4|integer|min:1900|max:'.(date('Y')+1),
         ]);
 
+        // capture the old data before updating
+        $oldData = $product->getAttributes();
+
         $product->update($request->all());
 
         ProductLog::create([
             'product_id' => $product->id,
             'user_id' => Auth::id(),
             'action' => 'updated',
+            'old_data' => $oldData,
         ]);
 
         return redirect()->route('products.index')->with('success', 'Product updated successfully.');
@@ -103,12 +107,16 @@ class ProductController extends Controller
 
     public function destroy(Product $product)
     {
+        // capture the old data before soft deleting
+        $oldData = $product->getAttributes();
+
         $product->delete();
 
         ProductLog::create([
             'product_id' => $product->id,
             'user_id' => Auth::id(),
             'action' => 'deleted',
+            'old_data' => $oldData,
         ]);
 
         return redirect()->route('products.index')->with('success', 'Product deleted successfully.');

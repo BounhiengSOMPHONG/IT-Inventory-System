@@ -13,6 +13,11 @@ class ProductLog extends Model
         'product_id',
         'user_id',
         'action',
+        'old_data',
+    ];
+
+    protected $casts = [
+        'old_data' => 'array',
     ];
 
     public function product()

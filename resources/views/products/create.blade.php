@@ -39,7 +39,7 @@
                                 <x-input-label for="ProductTypeId" :value="__('Product Type')" />
                                 <select name="ProductTypeId" id="ProductTypeId" class="block mt-1 w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm">
                                     @foreach($productTypes as $type)
-                                        <option value="{{ $type->id }}">{{ $type->product_type_name }}</option>
+                                        <option value="{{ $type->id }}">{{ $type->name }}</option>
                                     @endforeach
                                 </select>
                                 <x-input-error :messages="$errors->get('ProductTypeId')" class="mt-2" />

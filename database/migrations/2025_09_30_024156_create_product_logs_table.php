@@ -16,6 +16,8 @@ return new class extends Migration
             $table->foreignId('product_id')->constrained('products');
             $table->foreignId('user_id')->constrained('users');
             $table->string('action');
+            // store the previous data snapshot (nullable to support older logs)
+            $table->json('old_data')->nullable();
             $table->timestamps();
         });
     }

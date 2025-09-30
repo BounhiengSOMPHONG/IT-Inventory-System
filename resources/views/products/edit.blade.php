@@ -41,7 +41,7 @@
                                 <select name="ProductTypeId" id="ProductTypeId" class="block mt-1 w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm">
                                     @foreach($productTypes as $type)
                                         <option value="{{ $type->id }}" {{ $product->ProductTypeId == $type->id ? 'selected' : '' }}>
-                                            {{ $type->product_type_name }}
+                                            {{ $type->name }}
                                         </option>
                                     @endforeach
                                 </select>
