@@ -84,6 +84,24 @@
                                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">{{ $product->addedBy->name }}</td>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                                             <div class="flex items-center space-x-2">
+                                                <button type="button" class="inline-flex items-center px-3 py-1.5 bg-white border border-gray-200 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 view-btn"
+                                                        data-product-name="{{ $product->ProductName }}"
+                                                        data-product-model="{{ $product->ProductModel }}"
+                                                        data-product-manufacturer="{{ $product->Manufacturer }}"
+                                                        data-product-typeid="{{ $product->ProductTypeId }}"
+                                                        data-product-assetcode="{{ $product->AssetCode }}"
+                                                        data-product-serialnumber="{{ $product->SerialNumber }}"
+                                                        data-product-servicetag="{{ $product->ServiceTag }}"
+                                                        data-product-hd="{{ $product->HD }}"
+                                                        data-product-ram="{{ $product->RAM }}"
+                                                        data-product-cpu="{{ $product->CPU }}"
+                                                        data-product-status="{{ $product->Status }}"
+                                                        data-product-addedby="{{ $product->addedBy->name ?? '' }}"
+                                                        data-product-dateadd="{{ $product->DateAdd ?? '' }}"
+                                                        data-product-yearbought="{{ $product->YearBought }}">
+                                                    View
+                                                </button>
+
                                                 <a href="{{ route('products.edit', $product->id) }}" class="inline-flex items-center px-3 py-1.5 bg-white border border-gray-200 rounded-md shadow-sm text-sm font-medium text-indigo-600 hover:bg-indigo-50">Edit</a>
                                                 <form action="{{ route('products.destroy', $product->id) }}" method="POST" class="inline" onsubmit="return confirm('Are you sure you want to delete this product?');">
                                                     @csrf
@@ -98,9 +116,104 @@
                             </table>
                         </div>
 
+                        <!-- Modal (hidden by default) -->
+                        <div id="product-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black bg-opacity-50 px-4">
+                            <div class="bg-white rounded-lg shadow-xl w-full max-w-2xl">
+                                <div class="flex justify-between items-center px-6 py-4 border-b">
+                                    <h3 class="text-lg font-medium text-gray-900">Product Details</h3>
+                                    <button id="modal-close" class="text-gray-500 hover:text-gray-700">&times;</button>
+                                </div>
+                                <div class="p-6 space-y-3">
+                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        <div><strong>Product Name:</strong> <span id="m-ProductName" class="text-gray-700"></span></div>
+                                        <div><strong>Product Model:</strong> <span id="m-ProductModel" class="text-gray-700"></span></div>
+                                        <div><strong>Manufacturer:</strong> <span id="m-Manufacturer" class="text-gray-700"></span></div>
+                                        <div><strong>Product Type Id:</strong> <span id="m-ProductTypeId" class="text-gray-700"></span></div>
+                                        <div><strong>Asset Code:</strong> <span id="m-AssetCode" class="text-gray-700"></span></div>
+                                        <div><strong>Serial Number:</strong> <span id="m-SerialNumber" class="text-gray-700"></span></div>
+                                        <div><strong>Service Tag:</strong> <span id="m-ServiceTag" class="text-gray-700"></span></div>
+                                        <div><strong>HD:</strong> <span id="m-HD" class="text-gray-700"></span></div>
+                                        <div><strong>RAM:</strong> <span id="m-RAM" class="text-gray-700"></span></div>
+                                        <div><strong>CPU:</strong> <span id="m-CPU" class="text-gray-700"></span></div>
+                                        <div><strong>Status:</strong> <span id="m-Status" class="text-gray-700"></span></div>
+                                        <div><strong>Added By:</strong> <span id="m-AddedBy" class="text-gray-700"></span></div>
+                                        <div><strong>Date Added:</strong> <span id="m-DateAdd" class="text-gray-700"></span></div>
+                                        <div><strong>Year Bought:</strong> <span id="m-YearBought" class="text-gray-700"></span></div>
+                                    </div>
+                                </div>
+                                <div class="flex justify-end px-6 py-4 border-t">
+                                    <button id="modal-close-2" class="px-4 py-2 bg-gray-100 rounded-md">Close</button>
+                                </div>
+                            </div>
+                        </div>
+
                         <div class="mt-4">
                             {{ $products->links() }}
                         </div>
+                    
+                        <script>
+                            document.addEventListener('DOMContentLoaded', function () {
+                                const modal = document.getElementById('product-modal');
+                                const closeBtns = [document.getElementById('modal-close'), document.getElementById('modal-close-2')];
+
+                                function openModal(data) {
+                                    // populate fields
+                                    document.getElementById('m-ProductName').textContent = data.ProductName || '';
+                                    document.getElementById('m-ProductModel').textContent = data.ProductModel || '';
+                                    document.getElementById('m-Manufacturer').textContent = data.Manufacturer || '';
+                                    document.getElementById('m-ProductTypeId').textContent = data.ProductTypeId || '';
+                                    document.getElementById('m-AssetCode').textContent = data.AssetCode || '';
+                                    document.getElementById('m-SerialNumber').textContent = data.SerialNumber || '';
+                                    document.getElementById('m-ServiceTag').textContent = data.ServiceTag || '';
+                                    document.getElementById('m-HD').textContent = data.HD || '';
+                                    document.getElementById('m-RAM').textContent = data.RAM || '';
+                                    document.getElementById('m-CPU').textContent = data.CPU || '';
+                                    document.getElementById('m-Status').textContent = data.Status || '';
+                                    document.getElementById('m-AddedBy').textContent = data.AddedBy || '';
+                                    document.getElementById('m-DateAdd').textContent = data.DateAdd || '';
+                                    document.getElementById('m-YearBought').textContent = data.YearBought || '';
+
+                                    modal.classList.remove('hidden');
+                                    modal.classList.add('flex');
+                                }
+
+                                function closeModal() {
+                                    modal.classList.add('hidden');
+                                    modal.classList.remove('flex');
+                                }
+
+                                // attach to view buttons
+                                document.querySelectorAll('.view-btn').forEach(btn => {
+                                    btn.addEventListener('click', function () {
+                                        const data = {
+                                            ProductName: this.getAttribute('data-product-name'),
+                                            ProductModel: this.getAttribute('data-product-model'),
+                                            Manufacturer: this.getAttribute('data-product-manufacturer'),
+                                            ProductTypeId: this.getAttribute('data-product-typeid'),
+                                            AssetCode: this.getAttribute('data-product-assetcode'),
+                                            SerialNumber: this.getAttribute('data-product-serialnumber'),
+                                            ServiceTag: this.getAttribute('data-product-servicetag'),
+                                            HD: this.getAttribute('data-product-hd'),
+                                            RAM: this.getAttribute('data-product-ram'),
+                                            CPU: this.getAttribute('data-product-cpu'),
+                                            Status: this.getAttribute('data-product-status'),
+                                            AddedBy: this.getAttribute('data-product-addedby'),
+                                            DateAdd: this.getAttribute('data-product-dateadd'),
+                                            YearBought: this.getAttribute('data-product-yearbought'),
+                                        };
+
+                                        openModal(data);
+                                    });
+                                });
+
+                                closeBtns.forEach(b => b?.addEventListener('click', closeModal));
+
+                                // close on backdrop click
+                                modal.addEventListener('click', function (e) {
+                                    if (e.target === modal) closeModal();
+                                });
+                            });
+                        </script>
                     @else
                         <div class="text-center py-12">
                             <h3 class="mt-2 text-sm font-medium text-gray-900">No products found</h3>
