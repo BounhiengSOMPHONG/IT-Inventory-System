@@ -26,7 +26,16 @@ class ProductController extends Controller
         }
 
         $products = $query->paginate(10);
-        $deletedProducts = Product::onlyTrashed()->get();
+        $deletedSearch = $request->get('deleted_search');
+        $deletedProducts = Product::onlyTrashed()
+            ->when($deletedSearch, function ($q) use ($deletedSearch) {
+                $q->where(function ($q2) use ($deletedSearch) {
+                    $q2->where('ProductName', 'like', "%{$deletedSearch}%")
+                       ->orWhere('AssetCode', 'like', "%{$deletedSearch}%")
+                       ->orWhere('SerialNumber', 'like', "%{$deletedSearch}%");
+                });
+            })
+            ->get();
 
         return view('products.index', compact('products', 'deletedProducts'));
     }

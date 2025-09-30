@@ -238,6 +238,18 @@
                     <p class="text-sm text-gray-500 mt-1">Recently deleted products that can be restored.</p>
                 </div>
                 <div class="p-6">
+                    <div class="mb-6">
+                        <form method="GET" action="{{ route('products.index') }}" class="flex items-center w-full sm:w-auto">
+                            <label for="deleted_search" class="sr-only">Search deleted products</label>
+                            <div class="relative w-full sm:w-72">
+                                <input id="deleted_search" name="deleted_search" value="{{ request('deleted_search') }}" type="text" placeholder="Search deleted products..." class="block w-full pl-3 pr-3 py-2 border border-gray-200 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" />
+                            </div>
+                            <button type="submit" class="ml-3 inline-flex items-center px-3 py-2 bg-indigo-600 text-white rounded-md text-sm font-medium">Search</button>
+                            @if(request('deleted_search'))
+                                <a href="{{ route('products.index') }}" class="ml-2 inline-flex items-center px-3 py-2 bg-gray-100 text-gray-700 rounded-md text-sm">Clear</a>
+                            @endif
+                        </form>
+                    </div>
                     <div class="overflow-x-auto rounded-lg border border-gray-200">
                         <table class="min-w-full divide-y divide-gray-200">
                             <thead class="bg-gray-50">
