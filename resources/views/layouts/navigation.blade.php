@@ -111,30 +111,45 @@
             Employees
         </a>
         
-        <a 
-            href="{{ route('product-types.index') }}"
-            class="flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors duration-200
-                {{ request()->routeIs('product-types.*') 
-                    ? 'bg-purple-100 text-purple-700 border-l-4 border-purple-500' 
-                    : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900' }}"
+        <div 
+            x-data="{ open: {{ (request()->routeIs('products.*') || request()->routeIs('product-types.*')) ? 'true' : 'false' }} }"
+            class="space-y-1"
         >
-            <svg class="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7h18M3 12h18M3 17h18" />
-            </svg>
-            Product Types
-        </a>
+            <button 
+                @click="open = !open"
+                :class="open ? 'bg-purple-100 text-purple-700 border-l-4 border-purple-500' : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'"
+                class="w-full flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors duration-200 focus:outline-none"
+            >
+                <svg class="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" />
+                </svg>
+                <span class="flex-1 text-left">Products</span>
+                <svg :class="open ? 'transform rotate-90' : ''" class="h-4 w-4 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                </svg>
+            </button>
 
-        <a 
-            href="{{ route('products.index') }}"
-            class="flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors duration-200
-                {{ request()->routeIs('products.*') 
-                    ? 'bg-purple-100 text-purple-700 border-l-4 border-purple-500' 
-                    : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900' }}"
-        >
-            <svg class="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" />
-            </svg>
-            Products
-        </a>
+            <div x-show="open" x-cloak class="pl-8 mt-1 space-y-1">
+                <a 
+                    href="{{ route('products.index') }}"
+                    class="block px-3 py-2 text-sm rounded-md transition-colors duration-150
+                        {{ request()->routeIs('products.*') 
+                            ? 'bg-purple-50 text-purple-700' 
+                            : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900' }}"
+                >
+                    Products
+                </a>
+
+                <a 
+                    href="{{ route('product-types.index') }}"
+                    class="block px-3 py-2 text-sm rounded-md transition-colors duration-150
+                        {{ request()->routeIs('product-types.*') 
+                            ? 'bg-purple-50 text-purple-700' 
+                            : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900' }}"
+                >
+                    Product Types
+                </a>
+            </div>
+        </div>
     </nav>
 </div>
