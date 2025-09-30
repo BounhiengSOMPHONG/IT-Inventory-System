@@ -30,6 +30,9 @@ Route::middleware('auth')->group(function () {
     // Product type routes
     Route::resource('product-types', \App\Http\Controllers\ProductTypeController::class);
 
+    // Status routes
+    Route::resource('statuses', \App\Http\Controllers\StatusController::class);
+
     // Product routes
     Route::get('products/logs', [ProductController::class, 'logs'])->name('products.logs');
     Route::get('products/{product}/restore', [ProductController::class, 'restore'])->name('products.restore');

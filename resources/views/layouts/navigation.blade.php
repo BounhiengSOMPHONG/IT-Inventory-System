@@ -111,6 +111,19 @@
             Employees
         </a>
         
+        <a 
+            href="{{ route('statuses.index') }}"
+            class="flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors duration-200
+                {{ request()->routeIs('statuses.*') 
+                    ? 'bg-purple-100 text-purple-700 border-l-4 border-purple-500' 
+                    : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900' }}"
+        >
+            <svg class="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            Statuses
+        </a>
+
         <div 
             x-data="{ open: {{ (request()->routeIs('products.*') || request()->routeIs('product-types.*')) ? 'true' : 'false' }} }"
             class="space-y-1"
