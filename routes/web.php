@@ -24,6 +24,9 @@ Route::middleware('auth')->group(function () {
 
     // Employee routes
     Route::resource('employees', EmployeeController::class);
+    
+    // Product type routes
+    Route::resource('product-types', \App\Http\Controllers\ProductTypeController::class);
 });
 
 require __DIR__.'/auth.php';

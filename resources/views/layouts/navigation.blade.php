@@ -110,5 +110,18 @@
             </svg>
             Employees
         </a>
+        
+        <a 
+            href="{{ route('product-types.index') }}"
+            class="flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors duration-200
+                {{ request()->routeIs('product-types.*') 
+                    ? 'bg-purple-100 text-purple-700 border-l-4 border-purple-500' 
+                    : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900' }}"
+        >
+            <svg class="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7h18M3 12h18M3 17h18" />
+            </svg>
+            Product Types
+        </a>
     </nav>
 </div>
