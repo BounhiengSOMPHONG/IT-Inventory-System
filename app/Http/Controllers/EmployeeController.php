@@ -12,7 +12,13 @@ class EmployeeController extends Controller
     {
         $search = $request->get('search');
         $employees = Employee::with('department')
-            ->when($search, fn($q) => $q->where('name', 'like', "%{$search}%"))
+            ->when($search, function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                  ->orWhere('employee_code', 'like', "%{$search}%")
+                  ->orWhere('position', 'like', "%{$search}%")
+                  ->orWhere('email', 'like', "%{$search}%")
+                  ->orWhere('phone', 'like', "%{$search}%");
+            })
             ->paginate(10);
 
         return view('employees.index', compact('employees', 'search'));
@@ -27,7 +33,12 @@ class EmployeeController extends Controller
     public function store(Request $request)
     {
         $data = $request->validate([
+            'employee_code' => 'required|string|max:255|unique:employees,employee_code',
             'name' => 'required|string|max:255',
+            'position' => 'required|string|max:255',
+            'email' => 'required|email|max:255',
+            'phone' => 'nullable|string|max:255',
+            'status' => 'required|in:active,inactive,resigned',
             'department_id' => 'required|exists:departments,id',
             'remark' => 'nullable|string',
         ]);
@@ -46,7 +57,12 @@ class EmployeeController extends Controller
     public function update(Request $request, Employee $employee)
     {
         $data = $request->validate([
+            'employee_code' => 'required|string|max:255|unique:employees,employee_code,' . $employee->id,
             'name' => 'required|string|max:255',
+            'position' => 'required|string|max:255',
+            'email' => 'required|email|max:255',
+            'phone' => 'nullable|string|max:255',
+            'status' => 'required|in:active,inactive,resigned',
             'department_id' => 'required|exists:departments,id',
             'remark' => 'nullable|string',
         ]);

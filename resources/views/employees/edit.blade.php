@@ -13,9 +13,43 @@
 
                         <div class="grid grid-cols-1 gap-6">
                             <div>
+                                <label class="block text-sm font-medium text-gray-700">Employee Code</label>
+                                <input type="text" name="employee_code" value="{{ old('employee_code', $employee->employee_code) }}" class="mt-1 block w-full border border-gray-200 rounded-md px-3 py-2" required />
+                                @error('employee_code') <p class="text-red-500 text-sm mt-1">{{ $message }}</p> @enderror
+                            </div>
+
+                            <div>
                                 <label class="block text-sm font-medium text-gray-700">Name</label>
                                 <input type="text" name="name" value="{{ old('name', $employee->name) }}" class="mt-1 block w-full border border-gray-200 rounded-md px-3 py-2" required />
                                 @error('name') <p class="text-red-500 text-sm mt-1">{{ $message }}</p> @enderror
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700">Position</label>
+                                <input type="text" name="position" value="{{ old('position', $employee->position) }}" class="mt-1 block w-full border border-gray-200 rounded-md px-3 py-2" required />
+                                @error('position') <p class="text-red-500 text-sm mt-1">{{ $message }}</p> @enderror
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700">Email</label>
+                                <input type="email" name="email" value="{{ old('email', $employee->email) }}" class="mt-1 block w-full border border-gray-200 rounded-md px-3 py-2" required />
+                                @error('email') <p class="text-red-500 text-sm mt-1">{{ $message }}</p> @enderror
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700">Phone</label>
+                                <input type="text" name="phone" value="{{ old('phone', $employee->phone) }}" class="mt-1 block w-full border border-gray-200 rounded-md px-3 py-2" />
+                                @error('phone') <p class="text-red-500 text-sm mt-1">{{ $message }}</p> @enderror
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700">Status</label>
+                                <select name="status" class="mt-1 block w-full border border-gray-200 rounded-md px-3 py-2" required>
+                                    <option value="active" {{ old('status', $employee->status) == 'active' ? 'selected' : '' }}>Active</option>
+                                    <option value="inactive" {{ old('status', $employee->status) == 'inactive' ? 'selected' : '' }}>Inactive</option>
+                                    <option value="resigned" {{ old('status', $employee->status) == 'resigned' ? 'selected' : '' }}>Resigned</option>
+                                </select>
+                                @error('status') <p class="text-red-500 text-sm mt-1">{{ $message }}</p> @enderror
                             </div>
 
                             <div>
